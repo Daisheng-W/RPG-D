@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="zh-Hant"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>異界地下城：重啟人生 V3.0 (完整升級版)</title>
+<style>
+:root{--bg:#10131b;--panel:#1b2230;--panel2:#242d3e;--line:#39465c;--text:#edf2fb;--muted:#9eabc0;--gold:#e8bd62;--green:#72d6a0;--red:#ef7777;--blue:#79baff;--purple:#c49aff}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at top,#202a3b 0,#10131b 55%);color:var(--text);font:15px/1.55 system-ui,-apple-system,"Noto Sans TC",sans-serif;min-height:100vh}
+button{border:1px solid var(--line);background:#344158;color:var(--text);padding:10px 14px;border-radius:10px;font-weight:700;cursor:pointer;transition:.15s}
+button:hover:not(:disabled){filter:brightness(1.18);transform:translateY(-1px)}button:disabled{opacity:.38;cursor:not-allowed}
+.primary{background:#8b6428;border-color:#c29343}.blue{background:#285a86}.green{background:#246447}.danger{background:#713c45}.ghost{background:transparent}
+.wrap{max-width:1100px;margin:auto;padding:24px 16px 50px}.top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px}.brand{font-size:clamp(23px,4vw,34px);font-weight:900;letter-spacing:1px}.sub{color:var(--muted);font-size:13px}
+.layout{display:grid;grid-template-columns:300px 1fr;gap:16px}.panel{background:linear-gradient(180deg,#202a3a,#19212e);border:1px solid var(--line);border-radius:16px;padding:16px;box-shadow:0 12px 35px #0004}.panel h2,.panel h3{margin:0 0 12px}.stats{display:grid;grid-template-columns:1fr 1fr;gap:9px}.stat{background:#111925;border:1px solid #303d50;padding:10px;border-radius:10px}.stat small{display:block;color:var(--muted)}.stat strong{font-size:20px}.bar{height:9px;background:#0e1520;border-radius:99px;overflow:hidden;margin:5px 0 10px}.fill{height:100%;border-radius:99px}.hp{background:linear-gradient(90deg,#c44855,#f07b76)}.mp{background:linear-gradient(90deg,#3679c2,#76c1ff)}.xp{background:linear-gradient(90deg,#9870d2,#d0a4ff)}
+.tabs{position:fixed;left:50%;bottom:14px;transform:translateX(-50%);z-index:30;display:flex;gap:7px;flex-wrap:nowrap;justify-content:center;width:max-content;max-width:calc(100vw - 20px);padding:9px;background:#111925ee;border:1px solid #64738a;border-radius:16px;box-shadow:0 8px 30px #000b;backdrop-filter:blur(12px);overflow-x:auto;margin:0}.tabs .tab{white-space:nowrap;flex:0 0 auto}.wrap{padding-bottom:100px}.tab{padding:8px 12px;background:#161e2b}.tab.active{background:#6c522c;border-color:#bd9148}.view{display:none}.view.active{display:block}
+.battle-topline{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}.battle-topline h2{margin:0 0 4px}.battle-topline button{white-space:nowrap}.enemybox{display:flex;align-items:center;justify-content:space-between;gap:12px;background:linear-gradient(120deg,#2a3548,#1a2230);border:1px solid #46546b;border-radius:14px;padding:16px;margin:12px 0}.enemyicon{font-size:52px;filter:drop-shadow(0 6px 8px #0008)}.enemyname{font-size:22px;font-weight:900}.actions{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}.log{background:#0e1520;border:1px solid #2e394b;border-radius:12px;padding:14px;height:220px;overflow:auto;color:#e0e8f5;font-size:16px;line-height:1.9}.log p{margin:0 0 8px}.log p.crit-player{color:#ffd36d;font-weight:900;text-shadow:0 0 10px #ff9d2f99}.log p.crit-enemy{color:#ff8585;font-weight:900;text-shadow:0 0 12px #ff292999}.log p.boss-event{color:#d9a7ff;font-weight:800;text-shadow:0 0 10px #9a50ff88}
+#battle{position:relative}#battle.combat-player-crit .enemybox{animation:enemyHitFlash .62s ease}#battle.combat-enemy-crit .enemybox{animation:enemyHitRed .68s ease}#battle.combat-enemy-crit{animation:screenHit .34s ease}
+@keyframes enemyHitFlash{0%,100%{filter:none;transform:translateX(0)}18%{filter:brightness(2.1) drop-shadow(0 0 16px #ffd36d);transform:translateX(-7px) scale(1.015)}42%{transform:translateX(7px)}65%{transform:translateX(-3px)}}
+@keyframes enemyHitRed{0%,100%{filter:none;transform:translateX(0)}18%{filter:brightness(1.8) drop-shadow(0 0 18px #ff3838);transform:translateX(8px)}42%{transform:translateX(-8px)}65%{transform:translateX(4px)}}
+@keyframes screenHit{0%,100%{box-shadow:inset 0 0 0 transparent}30%{box-shadow:inset 0 0 0 3px #ff4d4d99}}
+.combat-impact-banner{position:absolute;z-index:3;top:74px;left:50%;transform:translate(-50%,-10px) scale(.75);opacity:0;pointer-events:none;font-size:clamp(22px,4vw,34px);font-weight:1000;letter-spacing:2px;text-align:center;text-shadow:0 3px 0 #111,0 0 18px currentColor;white-space:nowrap}.combat-impact-banner.show{animation:impactBanner .9s ease forwards}.combat-impact-banner.player{color:#ffd36d}.combat-impact-banner.enemy{color:#ff6464}
+@keyframes impactBanner{0%{opacity:0;transform:translate(-50%,8px) scale(.65)}18%{opacity:1;transform:translate(-50%,0) scale(1.12)}35%{transform:translate(-50%,0) scale(1)}78%{opacity:1}100%{opacity:0;transform:translate(-50%,-20px) scale(.96)}}.loot{border:1px solid #59677d;background:#111925;border-radius:10px;padding:10px;margin:8px 0}.item{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px;border:1px solid #354256;border-radius:10px;margin:7px 0;background:#151e2b}.item small{display:block;color:var(--muted)}.common{color:#d5dbe5}.magic{color:#75baff}.rare{color:#ffd36d}.legendary{color:#ff9b58}.mythic{color:#e28cff}.muted{color:var(--muted)}.tag{font-size:11px;border:1px solid currentColor;border-radius:99px;padding:2px 7px}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}.notice{padding:12px;border-radius:10px;background:#111925;color:#c9d5e7;border:1px solid #344157;margin:10px 0}.modal{position:fixed;inset:0;background:#000a;display:grid;place-items:center;padding:16px;z-index:5}.modalbox{max-width:520px;width:100%;background:#1c2635;border:1px solid #64738a;border-radius:18px;padding:22px;box-shadow:0 20px 70px #0009}.classgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}.classcard{background:#121b28;border:1px solid #3a4960;padding:12px;border-radius:12px;text-align:center;cursor:pointer}.classcard.selected{border:2px solid var(--gold);background:#30291d}.classcard b{display:block}.classcard .ico{font-size:32px}.hidden{display:none!important}.compare-modal{position:fixed;inset:0;background:#000b;display:grid;place-items:center;padding:16px;z-index:20}.compare-box{width:min(560px,100%);background:#1c2635;border:1px solid #71829b;border-radius:16px;padding:18px;box-shadow:0 20px 70px #000b}.compare-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.compare-stat{background:#111925;padding:9px;border-radius:9px}.up{color:#72d6a0}.down{color:#ef7777}.shopcard p{min-height:42px}.shopgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.shopcard{background:#111925;border:1px solid #46546b;border-radius:12px;padding:12px}.skillnode{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}.skillnode button{white-space:nowrap}@media(max-width:520px){.shopgrid{grid-template-columns:1fr}.tabs{bottom:8px;gap:4px;padding:6px;max-width:calc(100vw - 12px)}.tabs .tab{font-size:12px;padding:8px 9px}}
+@media(max-width:760px){.battle-topline{align-items:flex-start}.battle-topline button{margin-left:auto}.layout{grid-template-columns:1fr}.classgrid{grid-template-columns:1fr}.top{align-items:flex-start}.enemybox{align-items:flex-start}.wrap{padding:14px 10px 30px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+ <header class="top"><div><div class="brand">⚔ 異界地下城：重啟人生 <span style="font-size:13px;color:var(--gold)">V3.0</span></div><div class="sub">分段自動戰鬥｜Boss 前整備｜手動戰鬥操作｜分解免確認</div></div><div class="actions" style="margin:0"><button class="ghost" id="saveBtn">儲存進度</button><button class="blue" id="exportBtn">匯出存檔</button><button id="bgmBtn" class="ghost" onclick="toggleAudio()">🔇 音效：關</button><button id="bgmStyleBtn" class="ghost" onclick="cycleBGMStyle()">🎵 曲風：史詩地城</button><button class="blue" id="importBtn">匯入存檔</button><input id="importFile" type="file" accept=".json,application/json" class="hidden"><button class="ghost" id="resetBtn">重新開始</button></div></header>
+ <div class="layout">
+  <aside class="panel">
+   <h2>冒險者狀態</h2><div id="heroSummary" class="notice"><b>🔮 法師 Lv.5</b><br><span class="muted">地下城探索者 · 9 場勝利</span></div>
+   <div class="stats">
+    <div class="stat"><small>生命 HP</small><strong id="hpText">141/149</strong><div class="bar"><div id="hpBar" class="fill hp" style="width: 94.6309%;"></div></div></div>
+    <div class="stat"><small>魔力 MP</small><strong id="mpText">80/128</strong><div class="bar"><div id="mpBar" class="fill mp" style="width: 62.5%;"></div></div></div>
+    <div class="stat"><small>攻擊力</small><strong id="atkText">28</strong></div><div class="stat"><small>防禦力</small><strong id="defText">15</strong></div>
+    <div class="stat"><small>暴擊率</small><strong id="critText">15%</strong></div><div class="stat"><small>金幣</small><strong id="goldText">435 G</strong></div>
+   </div>
+   <h3 style="margin-top:16px">經驗值</h3><div id="xpText" class="sub">252 / 255 XP · 距離下次升級 3</div><div class="bar"><div id="xpBar" class="fill xp" style="width: 98.8235%;"></div></div>
+   <h3 style="margin-top:16px">目前裝備</h3><div id="equipped"><div class="item"><span>⚔️ 武器</span><span class="common">專注的鐵劍</span></div><div class="item"><span>🪖 頭盔</span><span class="muted">尚未裝備</span></div><div class="item"><span>🦺 胸甲</span><span class="muted">尚未裝備</span></div><div class="item"><span>🧤 手套</span><span class="magic">狂暴的皮革手套</span></div><div class="item"><span>👖 褲子</span><span class="magic">迅捷的旅行長褲</span></div><div class="item"><span>🥾 鞋子</span><span class="magic">狂暴的疾風長靴</span></div><div class="item"><span>💍 戒指</span><span class="muted">尚未裝備</span></div><div class="item"><span>📿 項鍊</span><span class="magic">專注的骨製項鍊</span></div></div>
+   <div class="notice">💡 提示：每 5 層會遇到 Boss。打怪取得裝備，替換更好的裝備，挑戰更深的地下城。</div>
+  </aside>
+  <main class="panel">
+   <div class="tabs">
+    <button class="tab" data-tab="battle">⚔ 戰鬥</button><button class="tab" data-tab="inventory">🎒 背包</button><button class="tab" data-tab="skills">✨ 技能</button><button class="tab" data-tab="dungeon">🗺 地下城</button><button class="tab active" data-tab="cards">🃏 怪物圖鑑</button>
+   </div>
+   <section id="battle" class="view">
+    <div class="battle-topline"><div><h2 id="floorTitle">地下城第 10 層</h2><div class="sub" id="floorDesc">Boss 守衛著這一層的出口。</div></div><button id="toggleAutoBtn" class="green" style="margin-left: auto; margin-right: 8px;">🤖 自動推進：開啟中</button><button class="primary hidden" id="nextFloorBattleBtn">⚔️ 前往下一層</button></div>
+    <h3>⚔ 戰鬥即時資訊</h3><div class="combat-impact-banner player" id="combatImpactBanner">💥 CRITICAL HIT!</div><div class="log" id="log" style="height:220px;font-family:ui-monospace,SFMono-Regular,Consolas,monospace;line-height:1.9;font-size:16px;margin:10px 0 14px"><p data-typed="0">› 你從冰冷的石板地面醒來。</p><p data-typed="0">› 系統提示：生存下去，找出離開地下城的方法。</p><p data-typed="0">› 遭遇敵人：哥布林！</p><p data-typed="0">› 📜 記憶碎片：牆上刻著「第七座門不是出口，而是封印」。你感到有人正透過黑暗注視著你。</p><p data-typed="0">› 🔥 施放【烈焰火球】，對 哥布林 造成 35 點傷害！（敵方剩餘 HP：10）</p><p data-typed="0">› 🔥 哥布林 陷入「灼燒」狀態（2 回合）！</p><p data-typed="0">› 🔥 灼燒發作！對 哥布林 造成 5 點火焰傷害（剩餘 1 回合）。</p><p data-typed="0">› 💢 哥布林 攻擊造成 8 點傷害。你的 HP：87。</p><p data-typed="0">› ❄️ 施放【寒冰新星】，對 哥布林 造成 30 點傷害！（敵方剩餘 HP：0）</p><p data-typed="0">› ❄️ 寒氣爆發！哥布林 被「凍結」1 回合！</p><p data-typed="0">› 🏆 擊敗 哥布林！獲得 48 XP、28 金幣。</p><p class="crit-player" data-typed="0">› ✨ 裝備掉落：[魔法] 專注的骨製項鍊（暴擊 +6）</p><p data-typed="0">› 你深入地下城第 2 層。稍作休整，恢復了一些生命與魔力。</p><p data-typed="0">› 遭遇敵人：洞穴蝙蝠！</p><p data-typed="0">› 🔥 施放【烈焰火球】，對 洞穴蝙蝠 造成 45 點傷害！（敵方剩餘 HP：1）</p><p data-typed="0">› 🔥 洞穴蝙蝠 陷入「灼燒」狀態（2 回合）！</p><p data-typed="0">› 🔥 灼燒發作！對 洞穴蝙蝠 造成 5 點火焰傷害（剩餘 1 回合）。</p><p data-typed="0">› 🏆 擊敗 洞穴蝙蝠！獲得 58 XP、24 金幣。</p><p data-typed="0">› 🎉 升級！現在是 Lv.2，獲得 1 點技能點，生命與魔力已恢復。</p><p data-typed="0">› ✨ 裝備掉落：[魔法] 狂暴的疾風長靴（防禦 +4、攻擊 +2）</p><p data-typed="0">› 你深入地下城第 3 層。稍作休整，恢復了一些生命與魔力。</p><p data-typed="0">› 遭遇敵人：哥布林！</p><p data-typed="0">› 📜 低語：遠處傳來熟悉的人聲，似乎有人呼喚你的名字……</p><p data-typed="0">› 🔥 施放【烈焰火球】，對 哥布林 造成 50 點傷害！（敵方剩餘 HP：9）</p><p data-typed="0">› 🔥 哥布林 陷入「灼燒」狀態（2 回合）！</p><p data-typed="0">› 🔥 灼燒發作！對 哥布林 造成 5 點火焰傷害（剩餘 1 回合）。</p><p data-typed="0">› 💢 哥布林 攻擊造成 7 點傷害。你的 HP：100。</p><p data-typed="0">› ☄️ 天空裂開縫隙，巨大的星辰隕石墜落！</p><p data-typed="0">› ☄️ 施放【星辰隕石】，對 哥布林 造成 80 點傷害！（敵方剩餘 HP：0）</p><p data-typed="0">› 🏆 擊敗 哥布林！獲得 68 XP、35 金幣。</p><p data-typed="0">› ✨ 裝備掉落：[魔法] 狂暴的皮革手套（生命 +6）</p><p data-typed="0">› 你深入地下城第 4 層。稍作休整，恢復了一些生命與魔力。</p><p data-typed="0">› 遭遇敵人：地下城盜賊！</p><p data-typed="0">› 🔥 施放【烈焰火球】，對 地下城盜賊 造成 40 點傷害！（敵方剩餘 HP：51）</p><p data-typed="0">› 🔥 地下城盜賊 陷入「灼燒」狀態（2 回合）！</p><p data-typed="0">› 🔥 灼燒發作！對 地下城盜賊 造成 5 點火焰傷害（剩餘 1 回合）。</p><p data-typed="0">› 💢 地下城盜賊 攻擊造成 16 點傷害。你的 HP：91。</p><p data-typed="0">› ☄️ 天空裂開縫隙，巨大的星辰隕石墜落！</p><p data-typed="0">› ☄️ 施放【星辰隕石】，對 地下城盜賊 造成 67 點傷害！（敵方剩餘 HP：0）</p><p data-typed="0">› 🏆 擊敗 地下城盜賊！獲得 78 XP、30 金幣。</p><p data-typed="0">› 🎉 升級！現在是 Lv.3，獲得 1 點技能點，生命與魔力已恢復。</p><p data-typed="0">› ✨ 裝備掉落：[魔法] 迅捷的旅行長褲（防禦 +4、魔力 +2）</p><p data-typed="0">› 你深入地下城第 5 層。稍作休整，恢復了一些生命與魔力。</p><p class="boss-event" data-typed="0">› ⚠ Boss 守門者現身！骸骨騎士！</p><p data-typed="0">› 👑 骸骨騎士：「活人的心跳……真是令人厭煩。把你的命留下。」</p><p class="boss-event" data-typed="0">› 🧰 第 5 層 Boss 戰前整備時間：可以切換裝備、技能配置與道具。</p><p data-typed="0">› 裝備了 迅捷的旅行長褲。</p><p data-typed="0">› 裝備了 狂暴的皮革手套。</p><p data-typed="0">› 裝備了 狂暴的疾風長靴。</p><p data-typed="0">› 裝備了 專注的骨製項鍊。</p><p class="crit-player" data-typed="0">› 技能樹升級：法術暴擊 Lv.1。</p><p class="crit-player" data-typed="0">› 技能樹升級：法術暴擊 Lv.2。</p><p class="boss-event" data-typed="0">› ⚔️ 你完成整備，正式挑戰第 5 層 Boss！</p><p data-typed="0">› ❄️ 施放【寒冰新星】，對 骸骨騎士 造成 44 點傷害！（敵方剩餘 HP：161）</p><p data-typed="0">› ❄️ 寒氣爆發！骸骨騎士 被「凍結」1 回合！</p><p data-typed="0">› ❄️ 骸骨騎士 處於「凍結」狀態，本回合無法行動！</p><p class="crit-player" data-typed="0">› 💥 暴擊！【烈焰火球】命中要害，造成 88 點傷害！（敵方剩餘 HP：73）</p><p data-typed="0">› 🔥 骸骨騎士 陷入「灼燒」狀態（2 回合）！</p><p class="boss-event" data-typed="0">› 🔥 骸骨騎士 進入第二階段！牠發出震耳欲聾的怒吼，攻勢提升！</p><p data-typed="0">› 👑 骸骨騎士：「骨骸重鑄——讓你見識真正的死亡！」</p><p data-typed="0">› 🔥 灼燒發作！對 骸骨騎士 造成 12 點火焰傷害（剩餘 1 回合）。</p><p data-typed="0">› 🛡️ 防禦成功！你擋下 骸骨騎士 的攻擊。</p><p data-typed="0">› ☄️ 天空裂開縫隙，巨大的星辰隕石墜落！</p><p class="crit-player" data-typed="0">› 💥 暴擊！【星辰隕石】命中要害，造成 147 點傷害！（敵方剩餘 HP：0）</p><p data-typed="0">› 🏆 擊敗 骸骨騎士！獲得 188 XP、103 金幣。</p><p data-typed="0">› 🎉 升級！現在是 Lv.4，獲得 1 點技能點，生命與魔力已恢復。</p><p data-typed="0">› 🃏 骸骨騎士 掉落怪物卡片！能力：魔力 +7</p><p data-typed="0">› ✨ 裝備掉落：[普通] 專注的鐵劍（攻擊 +5）</p><p class="boss-event" data-typed="0">› Boss 寶箱額外獲得 1 瓶生命藥水！</p><p class="boss-event" data-typed="0">› 🤖 已啟用自動推進：將自動戰鬥直到遇見 Boss 或商店！</p><p data-typed="0">› 你深入地下城第 6 層。稍作休整，恢復了一些生命與魔力。</p><p data-typed="0">› 遭遇敵人：地下城盜賊！</p><p data-typed="0">› 📜 低語：遠處傳來熟悉的人聲，似乎有人呼喚你的名字……</p><p data-typed="0">› 🔥 施放【烈焰火球】，對 地下城盜賊 造成 63 點傷害！（敵方剩餘 HP：45）</p><p data-typed="0">› 🔥 地下城盜賊 陷入「灼燒」狀態（2 回合）！</p><p data-typed="0">› 裝備了 專注的鐵劍。</p><p data-typed="0">› 🔥 灼燒發作！對 地下城盜賊 造成 6 點火焰傷害（剩餘 1 回合）。</p><p data-typed="0">› 💢 地下城盜賊 攻擊造成 8 點傷害。你的 HP：129。</p><p data-typed="0">› 裝備怪物卡片：骸骨騎士。</p><p data-typed="0">› 🔥 施放【烈焰火球】，對 地下城盜賊 造成 70 點傷害！（敵方剩餘 HP：0）</p><p data-typed="0">› 🔥 地下城盜賊 陷入「灼燒」狀態（2 回合）！</p><p data-typed="0">› 🏆 擊敗 地下城盜賊！獲得 98 XP、32 金幣。</p><p data-typed="0">› ✨ 裝備掉落：[魔法] 迅捷的疾風長靴（防禦 +6、攻擊 +2）</p><p data-typed="0">› 你深入地下城第 7 層。稍作休整，恢復了一些生命與魔力。</p><p data-typed="0">› 遭遇敵人：洞穴蝙蝠！</p><p data-typed="0">› 🔥 施放【烈焰火球】，對 洞穴蝙蝠 造成 70 點傷害！（敵方剩餘 HP：14）</p><p data-typed="0">› 🔥 洞穴蝙蝠 陷入「灼燒」狀態（2 回合）！</p><p data-typed="0">› 🔥 灼燒發作！對 洞穴蝙蝠 造成 5 點火焰傷害（剩餘 1 回合）。</p><p data-typed="0">› 💢 洞穴蝙蝠 攻擊造成 4 點傷害。你的 HP：133。</p><p class="crit-player" data-typed="0">› 💥 暴擊！【烈焰火球】命中要害，造成 118 點傷害！（敵方剩餘 HP：0）</p><p data-typed="0">› 🔥 洞穴蝙蝠 陷入「灼燒」狀態（2 回合）！</p><p data-typed="0">› 🏆 擊敗 洞穴蝙蝠！獲得 108 XP、46 金幣。</p><p data-typed="0">› 🎉 升級！現在是 Lv.5，獲得 1 點技能點，生命與魔力已恢復。</p><p data-typed="0">› ✨ 裝備掉落：[普通] 狂暴的鐵製頭盔（防禦 +5）</p><p data-typed="0">› 你深入地下城第 8 層。稍作休整，恢復了一些生命與魔力。</p><p data-typed="0">› 遭遇敵人：骷髏士兵！</p><p data-typed="0">› 🔥 施放【烈焰火球】，對 骷髏士兵 造成 73 點傷害！（敵方剩餘 HP：45）</p><p data-typed="0">› 🔥 骷髏士兵 陷入「灼燒」狀態（2 回合）！</p><p data-typed="0">› 🔥 灼燒發作！對 骷髏士兵 造成 7 點傷害。</p><p data-typed="0">› 💢 骷髏士兵 攻擊造成 20 點傷害。你的 HP：129。</p><p data-typed="0">› ☄️ 天空裂開縫隙，巨大的星辰隕石墜落！</p><p class="crit-player" data-typed="0">› 💥 暴擊！【星辰隕石】命中要害，造成 243 點傷害！（敵方剩餘 HP：0）</p><p data-typed="0">› 🏆 擊敗 骷髏士兵！獲得 118 XP、48 金幣。</p><p data-typed="0">› ✨ 裝備掉落：[魔法] 秘銀冠冕（防禦 +8、攻擊 +3）</p><p data-typed="0">› 你深入地下城第 9 層。稍作休整，恢復了一些生命與魔力。</p><p data-typed="0">› 遭遇敵人：地下城盜賊！</p><p data-typed="0">› 📜 低語：遠處傳來熟悉的人聲，似乎有人呼喚你的名字……</p><p data-typed="0">› 🔥 施放【烈焰火球】，對 地下城盜賊 造成 83 點傷害！（敵方剩餘 HP：145）</p><p data-typed="0">› 🔥 地下城盜賊 陷入「灼燒」狀態（2 回合）！</p><p data-typed="0">› 🔥 灼燒發作！對 地下城盜賊 造成 14 點傷害。</p><p data-typed="0">› 💢 地下城盜賊 攻擊造成 34 點傷害。你的 HP：115。</p><p data-typed="0">› ☄️ 天空裂開縫隙，巨大的星辰隕石墜落！</p><p data-typed="0">› ☄️ 施放【星辰隕石】，對 地下城盜賊 造成 126 點傷害！（敵方剩餘 HP：5）</p><p data-typed="0">› 🔥 灼燒發作！對 地下城盜賊 造成 14 點傷害。</p><p data-typed="0">› 🏆 擊敗 地下城盜賊！獲得 128 XP、54 金幣。</p><p data-typed="0">› ✨ 裝備掉落：[傳說] 掠奪者的鐵鱗護腿（防禦 +12、魔力 +10、攻擊 +5）</p><p data-typed="0">› 你深入地下城第 10 層。稍作休整，恢復了一些生命與魔力。</p><p data-typed="0">› 🏪 抵達第 10 層補給商店。</p></div>
+    <div class="enemybox"><div><div class="muted">目前遭遇</div><div class="enemyname" id="enemyName">等待遭遇</div><div id="enemyHpText" class="sub">—</div><div class="bar" style="width:min(300px,58vw)"><div id="enemyHpBar" class="fill hp" style="width: 0px;"></div></div></div><div class="enemyicon" id="enemyIcon">🕯️</div></div>
+    <div id="battleMessage" class="notice">已抵達補給商店，購買完成後即可離開並挑戰本層。</div><div id="battleActions" class="actions"></div><div id="shopPanel" class="notice"><h3>🏪 第 10 層補給商店</h3><p>商人：「挑好補給再出發吧！增益藥水效果持續接下來 3 場戰鬥。」</p><div class="shopgrid"><div class="shopcard"><b>❤️ 生命藥水</b><p>恢復道具 +1 瓶</p><b>42 G</b><br><button class="green" data-buy="potion">購買</button></div><div class="shopcard"><b>⚔️ 攻擊強化藥水</b><p>接下來 3 場戰鬥，攻擊力 +25%</p><b>65 G</b><br><button class="blue" data-buy="attack">購買</button></div><div class="shopcard"><b>🛡️ 傷害減免藥水</b><p>接下來 3 場戰鬥，受到傷害減少 20%</p><b>65 G</b><br><button class="blue" data-buy="guard">購買</button></div><div class="shopcard"><b>🍀 幸運藥水</b><p>接下來 3 場戰鬥，提高裝備掉落率與稀有度</p><b>88 G</b><br><button class="blue" data-buy="luck">購買</button></div><div class="shopcard"><b>🎁 隨機寶箱</b><p>價格調降，獲得一件依目前層數生成的隨機裝備</p><b>122 G</b><br><button class="green" data-buy="chest">購買寶箱</button></div></div><p class="sub">目前金幣：435 G。購買完成後，點擊下方按鈕離開商店。</p><button class="primary" data-leaveshop="">離開商店，挑戰本層</button></div>
+    <div class="notice" id="autoBattleStatus">🖐 手動戰鬥模式：請使用下方操作按鈕。</div>
+   </section>
+   <section id="inventory" class="view"><h2>背包與裝備</h2><div class="sub">可保存最多 4 組配裝，隨時切換不同套裝組合。背包最多保留 30 件裝備。</div><div id="loadoutPanel"><div class="notice"><b>🧩 四組配裝管理</b><br><small>將目前穿戴的 8 個部位保存成一組方案。切換時會自動將原裝備放回背包，並取出目標配裝。</small><br><b>目前裝備評分：50</b></div><div class="grid2"><div class="shopcard"><b>01｜空配裝欄位</b><p class="sub">保存目前穿戴裝備，建立新配裝方案。</p><button class="blue" data-loadout-save="0">保存目前配裝</button></div><div class="shopcard"><b>02｜空配裝欄位</b><p class="sub">保存目前穿戴裝備，建立新配裝方案。</p><button class="blue" data-loadout-save="1">保存目前配裝</button></div><div class="shopcard"><b>03｜空配裝欄位</b><p class="sub">保存目前穿戴裝備，建立新配裝方案。</p><button class="blue" data-loadout-save="2">保存目前配裝</button></div><div class="shopcard"><b>04｜空配裝欄位</b><p class="sub">保存目前穿戴裝備，建立新配裝方案。</p><button class="blue" data-loadout-save="3">保存目前配裝</button></div></div></div><h3 style="margin-top:18px">裝備背包</h3><div id="inventoryBulk"><div class="notice"><b>批次整理背包</b><br><small>選擇要處理的品質；只會出售／分解背包中的裝備，不會影響已穿戴或配裝保存中的裝備。</small><div class="actions"><label style="display:inline-flex;gap:5px;align-items:center"><input type="checkbox" class="bulk-quality" value="common" checked="">普通</label><label style="display:inline-flex;gap:5px;align-items:center"><input type="checkbox" class="bulk-quality" value="magic">魔法</label><label style="display:inline-flex;gap:5px;align-items:center"><input type="checkbox" class="bulk-quality" value="rare">稀有</label><label style="display:inline-flex;gap:5px;align-items:center"><input type="checkbox" class="bulk-quality" value="legendary">傳說</label><label style="display:inline-flex;gap:5px;align-items:center"><input type="checkbox" class="bulk-quality" value="mythic">神話</label></div><button class="danger" data-bulk="sell">出售所選品質</button> <button class="blue" data-bulk="disassemble">分解所選品質</button></div></div><div id="inventoryList"><div class="item"><div style="flex:1"><b class="legendary">掠奪者的鐵鱗護腿</b> <span class="tag">傳說</span><small>褲子 · 防禦 +12、魔力 +10、攻擊 +5 · 強化 +0</small><small style="color:var(--gold)">🪓 狂戰士套裝部件</small><small>相較目前裝備：<span class="up">攻擊 +5</span>　<span class="up">防禦 +8</span>　<span class="up">魔力 +8</span></small><small>預估 DPS：30.9 → 36.5 <span class="up">(+5.5)</span></small></div><div><button class="green" data-equip="0">直接穿戴</button><button class="ghost" data-sell="0">出售</button><button class="blue" data-disassemble="0">分解</button></div></div><div class="item"><div style="flex:1"><b class="magic">秘銀冠冕</b> <span class="tag">魔法</span><small>頭盔 · 防禦 +8、攻擊 +3 · 強化 +0</small><small>相較目前裝備：<span class="up">攻擊 +3</span>　<span class="up">防禦 +8</span></small><small>預估 DPS：30.9 → 34.3 <span class="up">(+3.3)</span></small></div><div><button class="green" data-equip="1">直接穿戴</button><button class="ghost" data-sell="1">出售</button><button class="blue" data-disassemble="1">分解</button></div></div><div class="item"><div style="flex:1"><b class="magic">迅捷的疾風長靴</b> <span class="tag">魔法</span><small>鞋子 · 防禦 +6、攻擊 +2 · 強化 +0</small><small>相較目前裝備：<span class="up">防禦 +2</span></small><small>預估 DPS：30.9 → 30.9 <span class="up">(+0.0)</span></small></div><div><button class="green" data-equip="3">直接穿戴</button><button class="ghost" data-sell="3">出售</button><button class="blue" data-disassemble="3">分解</button></div></div><div class="item"><div style="flex:1"><b class="common">狂暴的鐵製頭盔</b> <span class="tag">普通</span><small>頭盔 · 防禦 +5 · 強化 +0</small><small>相較目前裝備：<span class="up">防禦 +5</span></small><small>預估 DPS：30.9 → 30.9 <span class="up">(+0.0)</span></small></div><div><button class="green" data-equip="2">直接穿戴</button><button class="ghost" data-sell="2">出售</button><button class="blue" data-disassemble="2">分解</button></div></div></div><h3 style="margin-top:18px">裝備強化工坊</h3><div id="enhancePanel"><div class="notice">強化材料：<b style="color:var(--gold)">0 個</b><br><small>分解裝備可取得強化材料。每次強化提升該裝備所有屬性 6%，最高 +20；強化等級越高，消耗材料越多。背包與已穿戴裝備都能強化。</small></div><div class="item"><div style="flex:1"><b class="legendary">掠奪者的鐵鱗護腿</b><small>褲子｜背包 · 強化 +0｜防禦 +12、魔力 +10、攻擊 +5</small><small style="color:var(--gold)">🪓 狂戰士套裝</small></div><button class="blue" data-enhance-bag="0" disabled="">強化（2 材料）</button></div><div class="item"><div style="flex:1"><b class="magic">秘銀冠冕</b><small>頭盔｜背包 · 強化 +0｜防禦 +8、攻擊 +3</small></div><button class="blue" data-enhance-bag="1" disabled="">強化（2 材料）</button></div><div class="item"><div style="flex:1"><b class="common">狂暴的鐵製頭盔</b><small>頭盔｜背包 · 強化 +0｜防禦 +5</small></div><button class="blue" data-enhance-bag="2" disabled="">強化（2 材料）</button></div><div class="item"><div style="flex:1"><b class="magic">迅捷的疾風長靴</b><small>鞋子｜背包 · 強化 +0｜防禦 +6、攻擊 +2</small></div><button class="blue" data-enhance-bag="3" disabled="">強化（2 材料）</button></div><div class="item"><div style="flex:1"><b class="magic">迅捷的旅行長褲</b><small>褲子｜已穿戴 · 強化 +0｜防禦 +4、魔力 +2</small></div><button class="blue" data-enhance-equipped="褲子" disabled="">強化（2 材料）</button></div><div class="item"><div style="flex:1"><b class="magic">狂暴的皮革手套</b><small>手套｜已穿戴 · 強化 +0｜生命 +6</small></div><button class="blue" data-enhance-equipped="手套" disabled="">強化（2 材料）</button></div><div class="item"><div style="flex:1"><b class="magic">狂暴的疾風長靴</b><small>鞋子｜已穿戴 · 強化 +0｜防禦 +4、攻擊 +2</small></div><button class="blue" data-enhance-equipped="鞋子" disabled="">強化（2 材料）</button></div><div class="item"><div style="flex:1"><b class="magic">專注的骨製項鍊</b><small>項鍊｜已穿戴 · 強化 +0｜暴擊 +6</small></div><button class="blue" data-enhance-equipped="項鍊" disabled="">強化（2 材料）</button></div><div class="item"><div style="flex:1"><b class="common">專注的鐵劍</b><small>武器｜已穿戴 · 強化 +0｜攻擊 +5</small></div><button class="blue" data-enhance-equipped="武器" disabled="">強化（2 材料）</button></div></div></section>
+   <section id="skills" class="view"><h2>技能配置</h2><div id="skillList"><div class="notice"><b>法師專屬技能樹｜可用技能點：2</b><br>每次角色升級獲得 1 點。每個技能最多提升 10 級，專注培養職業特色。</div><div class="item skillnode"><div><b>奧術專精　Lv.0/10</b><small>每級法術攻擊力 +2</small></div><button class="blue" data-skillup="spellPower">升級（1 點）</button></div><div class="item skillnode"><div><b>法術暴擊　Lv.2/10</b><small>每級法術暴擊率 +4%</small></div><button class="blue" data-skillup="spellCrit">升級（1 點）</button></div><div class="item skillnode"><div><b>節能施法　Lv.0/10</b><small>每級施法不消耗魔力機率 +5%</small></div><button class="blue" data-skillup="freeCast">升級（1 點）</button></div><div class="item skillnode"><div><b>魔力護體　Lv.0/10</b><small>每級最大生命 +8</small></div><button class="blue" data-skillup="vitality">升級（1 點）</button></div><div class="notice">職業技能：火球術。法師專精法術爆擊，並有機會免費施放法術。</div>⚡ 法師主動戰術技能（自動／手動皆可施放）🔥 烈焰火球 消耗 16 MP2.5x 法術傷害 +「灼燒」2 回合❄️ 寒冰新星 消耗 18 MP2.0x 冰霜傷害 +「凍結」敵人 1 回合🔮 奧術護盾 消耗 14 MP獲得 110% 最大魔力護盾 + 恢復 15% 生命☄️ 星辰隕石 消耗 32 MP終極隕石，造成 4.2x 毀滅性法術傷害</div><div class="notice">升級會獲得技能點。技能等級越高，效果越強。</div></section>
+   <section id="dungeon" class="view"><h2>地下城探索</h2><div id="dungeonInfo"><div class="notice"><b>目前進度：第 10 層</b><br>每 5 層會出現 Boss；每 10 層抵達補給商店。採休閒成長曲線：前期較容易累積裝備，中後期逐步提高挑戰；裝備數值與稀有度隨深度成長。<br>目前累計勝利：9 場<br>生命藥水：5 瓶<br>藥水效果剩餘戰鬥：攻擊 0、減傷 0、幸運 0</div></div></section>
+   <section id="cards" class="view active"><h2>🃏 怪物圖鑑與卡片</h2><div id="cardSummary" class="notice">已收集卡片 0 張｜已裝備 1/3 張<br>怪物卡片會提供隨機能力，裝備後直接加成角色屬性。</div><h3>怪物圖鑑</h3><div id="monsterBook"><div class="grid2"><div class="item"><div style="flex:1"><b>👺 哥布林</b></div><span class="tag">已收錄</span></div><div class="item"><div style="flex:1"><b>🦇 洞穴蝙蝠</b></div><span class="tag">已收錄</span></div><div class="item"><div style="flex:1"><b>💀 骷髏士兵</b></div><span class="tag">已收錄</span></div><div class="item"><div style="flex:1"><b>🗡️ 地下城盜賊</b></div><span class="tag">已收錄</span></div><div class="item"><div style="flex:1"><b>❔ 未知怪物</b></div><span class="tag">未發現</span></div><div class="item"><div style="flex:1"><b>❔ 未知怪物</b></div><span class="tag">未發現</span></div><div class="item"><div style="flex:1"><b>💀 骸骨騎士</b><small>最高卡片：Lv.1　能力評分 9</small><small>魔力 +7</small></div><span class="tag">已收錄</span></div><div class="item"><div style="flex:1"><b>❔ 未知怪物</b></div><span class="tag">未發現</span></div><div class="item"><div style="flex:1"><b>❔ 未知怪物</b></div><span class="tag">未發現</span></div></div></div><h3 style="margin-top:18px">已收集卡片</h3><div id="cardList"><div class="notice">尚未取得怪物卡片。擊敗怪物有機會掉落，Boss 掉落機率更高。</div></div><h3 style="margin-top:18px">目前裝備中的卡片</h3><div id="equippedCardList"><div class="item"><div><b>💀 骸骨騎士 卡 Lv.1</b><small>魔力 +7</small></div><button class="ghost" data-card-unequip="0">卸下</button></div></div><h3 style="margin-top:18px">卡片融合</h3><div class="notice">同一怪物、同等級的未裝備卡片會自動合成升級；不同怪物卡片可融合成一張全新隨機能力卡。裝備中的卡片不會自動合成，也不能作為融合材料。</div><div id="cardFusion"><div class="notice">同一怪物、同等級卡片已自動合成。若要融合不同怪物，先選一張再選另一張；裝備中的卡片不能當材料。</div><div id="fusionChoice" class="sub">尚未選擇卡片。</div></div></section>
+  </main>
+ </div>
+</div>
+<div class="modal hidden" id="startModal"><div class="modalbox"><h2>序章：醒來時，世界已經變了</h2><p>你是一名熱愛 RPG 的普通玩家。昨晚又玩到深夜，醒來時卻發現自己躺在陌生的地下城入口。眼前浮現一個熟悉的狀態視窗——這不是夢。</p><p><b>選擇你的職業：</b></p><div class="classgrid" id="classChoices">
+ <div class="classcard" data-class="warrior"><div class="ico">🛡️</div><b>戰士</b><small>高生命、高防禦</small></div>
+ <div class="classcard selected" data-class="mage"><div class="ico">🔮</div><b>法師</b><small>高魔力、強力法術</small></div>
+ <div class="classcard" data-class="archer"><div class="ico">🏹</div><b>弓箭手</b><small>高敏捷、暴擊</small></div>
+ </div><button class="primary" style="width:100%;margin-top:16px" id="startBtn">踏入地下城</button><p class="sub">遊戲會自動儲存在此瀏覽器。建議定期使用「匯出存檔」備份，換電腦時可再匯入。</p></div></div>
+<div id="compareModal" class="compare-modal hidden"><div class="compare-box"><h2>裝備屬性比較</h2><div id="compareContent"></div><div class="actions"><button class="primary" id="confirmEquip">確認替換</button><button class="ghost" id="cancelCompare">暫不替換</button></div></div></div>
+<script>
+const $=id=>document.getElementById(id);
+const classes={
+ warrior:{name:"戰士",icon:"🛡️",hp:145,mp:45,atk:16,def:7,crit:5,skill:"重斬",skillDesc:"造成 2.0 倍攻擊傷害，並降低敵人防禦"},
+ mage:{name:"法師",icon:"🔮",hp:95,mp:95,atk:13,def:3,crit:7,skill:"火球術",skillDesc:"消耗 18 MP，造成 2.7 倍魔法傷害"},
+ archer:{name:"弓箭手",icon:"🏹",hp:112,mp:65,atk:15,def:4,crit:14,skill:"精準射擊",skillDesc:"消耗 14 MP，造成 2.2 倍傷害，暴擊率提高"}
+};
+const slots=["武器","頭盔","胸甲","手套","褲子","鞋子","戒指","項鍊"];
+const slotIcons=["⚔️","🪖","🦺","🧤","👖","🥾","💍","📿"];
+const bases={武器:["鐵劍","戰鬥法杖","獵人長弓","騎士巨劍"],頭盔:["皮革頭盔","鐵製頭盔","秘銀冠冕"],胸甲:["冒險者胸甲","鎖子甲","守護者鎧甲"],手套:["皮革手套","強化護手"],褲子:["旅行長褲","鐵鱗護腿"],鞋子:["旅人靴","疾風長靴"],戒指:["銅戒指","力量戒指","魔力戒指"],項鍊:["骨製項鍊","守護項鍊","古老護符"]};
+const prefixes=["堅韌的","迅捷的","狂暴的","專注的","掠奪者的","古代的","精良的",""];
+const rarities=[["common","普通",48],["magic","魔法",29],["rare","稀有",17],["legendary","傳說",5],["mythic","神話",1]];
+const equipmentSets=[
+ {id:"guardian",name:"守護者套裝",icon:"🛡️",desc:"堅實防禦與生命",bonus:{2:{Def:7,Hp:45},4:{Def:16,Hp:110},6:{Def:28,Hp:200},8:{Def:44,Hp:320}}},
+ {id:"berserker",name:"狂戰士套裝",icon:"🪓",desc:"強化攻擊與暴擊",bonus:{2:{Atk:8,Crit:3},4:{Atk:18,Crit:7},6:{Atk:32,Crit:12},8:{Atk:50,Crit:18}}},
+ {id:"arcane",name:"秘法套裝",icon:"🔮",desc:"強化魔力與法術",bonus:{2:{Mp:35,SpellCrit:4},4:{Mp:80,SpellCrit:9},6:{Mp:145,SpellCrit:15},8:{Mp:230,SpellCrit:23}}},
+ {id:"ranger",name:"遊俠套裝",icon:"🏹",desc:"敏捷、物理技暴與閃避",bonus:{2:{SkillCrit:4,Dodge:3},4:{SkillCrit:9,Dodge:7},6:{SkillCrit:15,Dodge:12},8:{SkillCrit:23,Dodge:18}}},
+ {id:"fortune",name:"尋寶者套裝",icon:"🍀",desc:"均衡提升與冒險收益",bonus:{2:{Atk:5,Def:5},4:{Atk:12,Def:12,Hp:55},6:{Atk:22,Def:22,Hp:120},8:{Atk:35,Def:35,Hp:210}}}
+];
+let selectedClass="warrior",S=null;
+function fresh(cls){let c=classes[cls];return {cls,monsterCards:[],equippedCards:[],discoveredMonsters:[],level:1,xp:0,gold:35,hp:c.hp,maxHp:c.hp,mp:c.mp,maxMp:c.mp,baseAtk:c.atk,baseDef:c.def,baseCrit:c.crit,potions:4,floor:1,inventory:[],equipped:{},loadouts:Array(4).fill(null),skills:{},skillPoints:0,skillTree:{power:0,guard:0,vitality:0,skill:0},shopStock:null,buffs:{attack:0,guard:0,luck:0},pendingChest:null,chestRerolls:0,upgradeMaterials:0,enemy:null,phase:"battle",log:["你從冰冷的石板地面醒來。","系統提示：生存下去，找出離開地下城的方法。"],wins:0,autoBattleEnabled:null,autoBattleAskedFloor:0,bossPrep:false};}
+function xpNeed(){return 65+S.level*38}
+function setCounts(){let counts={};Object.values(S.equipped||{}).forEach(it=>{if(it&&it.setId)counts[it.setId]=(counts[it.setId]||0)+1});return counts}
+function activeSetBonus(stat){let totalBonus=0,counts=setCounts();equipmentSets.forEach(set=>{let n=counts[set.id]||0;let tier=[8,6,4,2].find(x=>n>=x);if(tier)totalBonus+=(set.bonus[tier][stat]||0)});return totalBonus}
+function total(stat){let v=S["base"+stat]||0;let aliases={Atk:"atk",Def:"def",Hp:"hp",Mp:"mp",Crit:"crit",SpellCrit:"spellCrit",SkillCrit:"skillCrit",Dodge:"dodge"};Object.values(S.equipped||{}).forEach(i=>{if(i&&i.stats)v+=Number(i.stats[stat]||i.stats[aliases[stat]]||0)});(S.equippedCards||[]).forEach(i=>{if(i&&i.stats&&i.stats[stat])v+=i.stats[stat]});v+=activeSetBonus(stat);let t=S.skillTree||{};if(stat==="Atk")v+=(t.power||0)*2;if(stat==="Def")v+=(t.guard||0);if(stat==="Hp")v+=(t.vitality||0)*15;if(stat==="Crit")v+=(t.crit||0)*3;if(stat==="SpellCrit")v+=(t.spellCrit||0)*4;if(stat==="FreeCast")v+=(t.freeCast||0)*5;if(stat==="SkillCrit")v+=(t.skillCrit||0)*5;if(stat==="Dodge")v+=(t.dodge||0)*3;if(stat==="SpellPower")v+=(t.spellPower||0)*2;return v}
+function rand(n){return Math.floor(Math.random()*n)}
+function weighted(boost=0){let f=S.floor, w=[Math.max(18,48-f*.45),Math.min(34,29+f*.18),Math.min(30,17+f*.28),Math.min(18,5+f*.16),Math.min(10,1+f*.07)];if(boost>0){w[0]*=Math.max(.12,1-boost*.18);w[1]*=(1+boost*.12);w[2]*=(1+boost*.24);w[3]*=(1+boost*.42);w[4]*=(1+boost*.65)}if(S.buffs&&S.buffs.luck>0){w[0]*=.72;w[1]*=1.12;w[2]*=1.25;w[3]*=1.35;w[4]*=1.45}let sum=w.reduce((a,b)=>a+b,0),n=Math.random()*sum;for(let i=0;i<rarities.length;i++){n-=w[i];if(n<0)return rarities[i]}return rarities[0]}
+function makeItem(rerollBoost=0){let slot=slots[rand(slots.length)],r=weighted(rerollBoost),tier=Math.max(1,Math.floor((S.floor+1)/3)),mult={common:1,magic:1.18,rare:1.42,legendary:1.82,mythic:2.3}[r[0]];
+ let name=bases[slot][rand(bases[slot].length)],pre=prefixes[rand(prefixes.length)],stats={};
+ let main=slot==="武器"?"atk":slot==="胸甲"||slot==="頭盔"||slot==="褲子"||slot==="鞋子"?"def":Math.random()<.5?"hp":"crit";
+ let val=Math.max(1,Math.round((2+tier*1.5)*mult));stats[main]=val;
+ let extra={common:0,magic:1,rare:2,legendary:3,mythic:4}[r[0]],keys=["atk","def","hp","mp","crit"];
+ for(let j=0;j<extra;j++){let k=keys[rand(keys.length)];stats[k]=(stats[k]||0)+Math.max(1,Math.round((1+tier*.55)*mult))}
+ // 高稀有度除了數值更高，也會有較高機率獲得額外詞綴
+ if(r[0]==="rare"&&Math.random()<.35||r[0]==="legendary"&&Math.random()<.75||r[0]==="mythic"&&Math.random()<1){let k=keys[rand(keys.length)];stats[k]=(stats[k]||0)+Math.max(1,Math.round((1+tier*.45)*mult))}
+ let set=null,setChance={common:0,magic:.08,rare:.28,legendary:.62,mythic:.9}[r[0]];if(Math.random()<setChance)set=equipmentSets[rand(equipmentSets.length)];
+ let label={atk:"攻擊",def:"防禦",hp:"生命",mp:"魔力",crit:"暴擊"},score=Object.values(stats).reduce((a,b)=>a+b,0);
+ return {id:Date.now()+Math.random(),enhanceLevel:0,slot,name:(pre?pre:"")+name,rarity:r[0],rarityName:r[1],stats,score,setId:set?.id||null,setName:set?.name||null,setIcon:set?.icon||null,label:Object.entries(stats).map(([k,v])=>label[k]+" +"+v).join("、")};
+}
+const enemies=[["哥布林","👺",40,8,1],["洞穴蝙蝠","🦇",34,10,1],["骷髏士兵","💀",55,11,1],["地下城盜賊","🗡️",62,13,1],["腐化史萊姆","🟢",72,12,1],["哥布林巫師","🧙",66,15,1],["暗影魔狼","🐺",78,16,11],["石像鬼","🗿",95,14,11],["深淵食屍鬼","🧟",105,18,21],["烈焰元素","🔥",92,22,21],["墮落聖騎士","🛡️",125,21,31],["虛空凝視者","👁️",112,25,31]];
+const monsterCatalog=[...enemies.map(x=>({name:x[0],icon:x[1]})),{name:"骸骨騎士",icon:"💀"},{name:"哥布林王",icon:"👑"},{name:"深淵守衛",icon:"👹"},{name:"煉獄魔龍",icon:"🐉"},{name:"混沌領主",icon:"👁️"},{name:"虛空古神",icon:"🌌"}];
+function makeMonsterCard(name){let tier=Math.max(1,Math.floor((S.floor+1)/5)),keys=["Atk","Def","Hp","Mp","Crit","SpellCrit","SkillCrit","Dodge"],count=1+rand(2),stats={};for(let i=0;i<count;i++){let k=keys[rand(keys.length)];stats[k]=(stats[k]||0)+({Atk:1+tier,Def:1+Math.floor(tier*.5),Hp:5+tier*3,Mp:4+tier*2,Crit:1,SpellCrit:1,SkillCrit:1,Dodge:1}[k]+rand(Math.max(2,tier)));}return {id:Date.now()+Math.random(),monster:name,icon:(monsterCatalog.find(x=>x.name===name)||{}).icon||"🃏",level:1,rarity:weighted()[0],stats};}
+function cardPower(c){let w={warrior:{Atk:3,Def:2.5,Hp:0.4,Crit:2.5,SkillCrit:2.5},mage:{Atk:3,SpellCrit:3,Crit:2.5,Mp:0.35,Hp:0.3,Def:1.5},archer:{Atk:3,SkillCrit:3,Crit:2.5,Dodge:2.8,Hp:0.3,Def:1.5}}[S?.cls||"warrior"]||{Atk:2,Def:2,Hp:0.3};let sum=Object.entries(c.stats||{}).reduce((a,[k,v])=>a+(Number(v)||0)*(w[k]||0),0);return Math.round(sum)+(c.level||1)*2;}
+function cardStatsText(c){let n={Atk:"攻擊",Def:"防禦",Hp:"生命",Mp:"魔力",Crit:"暴擊",SpellCrit:"法術暴擊",SkillCrit:"物理技暴",Dodge:"閃避"};return Object.entries(c.stats||{}).map(([k,v])=>`${n[k]||k} +${v}`).join(" · ")||"無能力"}
+function autoMergeEqualCards(){
+ S.monsterCards=S.monsterCards||[];S.equippedCards=S.equippedCards||[];let merges=0,guard=0;
+ while(guard++<500){let found=false;
+  for(let i=0;i<S.monsterCards.length&&!found;i++){let a=S.monsterCards[i];if(!a)continue;let j=S.monsterCards.findIndex((b,k)=>k!==i&&b&&b.monster===a.monster&&(Number(b.level)||1)===(Number(a.level)||1));
+   if(j>=0){let b=S.monsterCards[j],lv=Number(a.level)||1;let keys=new Set([...Object.keys(a.stats||{}),...Object.keys(b.stats||{})]);let stats={};keys.forEach(k=>stats[k]=Math.max(1,Math.round(((Number(a.stats?.[k])||0)+(Number(b.stats?.[k])||0))*1.18)));a.stats=stats;a.level=lv+1;a.rarity=a.rarity||b.rarity;S.monsterCards.splice(j,1);merges++;found=true;break}
+  }
+  if(!found)break;
+ }
+ return merges;
+}
+function dropMonsterCard(enemy){
+ let chance=enemy.boss?1.0:0.38;
+ if(Math.random()>chance)return null;
+ let card=makeMonsterCard(enemy.name);
+ S.monsterCards=S.monsterCards||[];
+ S.monsterCards.push(card);
+ log(`🃏 獲得怪物卡片：【${card.monster}】！`,true);
+ let merged=autoMergeEqualCards();
+ if(merged>0)log(`✨ 相同怪物卡片自動融合升級（共融合 ${merged} 次）！`,true);
+ return card;
+}
+function askAutoBattleAfterBoss(floor){
+ let next=floor+1,until=floor+4;
+ $('choiceTitle').textContent=`🎉 擊敗第 ${floor} 層 Boss！`;
+ $('choiceDesc').innerHTML=`接下來第 <b>${next} ～ ${until} 層</b> 要自動連續推進，直到 <b>第 ${floor+5} 層 Boss / 商店</b> 前再暫停整備嗎？`;
+ $('choiceAutoBtn').onclick=()=>{
+  $('customChoiceModal').classList.add('hidden');
+  S.autoBattleEnabled=true;
+  log('🤖 已啟用自動推進：將自動戰鬥直到遇見 Boss 或商店！');
+  nextFloor();
+  if(S.phase==='battle'&&S.autoBattleEnabled)afterLogPlayback(()=>autoBattle());
+ };
+ $('choiceManualBtn').onclick=()=>{
+  $('customChoiceModal').classList.add('hidden');
+  S.autoBattleEnabled=false;
+  log('🖐 已切換為手動操作模式。');
+  nextFloor();
+ };
+ afterLogPlayback(()=>{
+  $('customChoiceModal').classList.remove('hidden');
+  render();
+ });
+}
+function spawn(){
+ let boss=S.floor%5===0,tier=Math.floor(S.floor/5);
+ let scale=1+(S.floor-1)*0.16+(S.floor>15?Math.pow(1.065,S.floor-15)-1:0);
+ let bosses=[["骸骨騎士","💀",195,20],["哥布林王","👑",265,25],["深淵守衛","👹",420,34],["煉獄魔龍","🐉",720,45],["混沌領主","👁️",1200,58],["虛空古神","🌌",2000,72]];
+  let e=(()=>{if(boss){let b=bosses[Math.min(bosses.length-1,tier-1)];let extra=tier>6?Math.pow(1.38,tier-6):1;return {name:b[0]+(tier>6?` (覺醒+${tier-6})`:""),icon:b[1],hp:Math.round(b[2]*extra),atk:Math.round(b[3]*(tier>6?Math.pow(1.14,tier-6):1)),boss:true}}else{let pool=enemies.filter(x=>(S.floor||1)>=(x[4]||1));let m=pool[rand(pool.length)];
+return {name:m[0],icon:m[1],hp:Math.round(m[2]*scale),atk:Math.round(m[3]*scale),boss:false}}})();
+ e.maxHp=e.hp;e.bossPhase=1;e.bossTurn=0;e.bossIntroPlayed=false;S.enemy=e;
+ S.phase=boss?"prep":"battle";S.bossPrep=!!boss;
+ S.discoveredMonsters=S.discoveredMonsters||[];if(!S.discoveredMonsters.includes(e.name))S.discoveredMonsters.push(e.name);
+ log((boss?"⚠ Boss 守門者現身！":"遭遇敵人：")+e.name+"！");
+    if(boss){
+  let baseName=e.name.replace(/ \(覺醒.*\)/,"");
+  let lines={"骸骨騎士":"「活人的心跳……真是令人厭煩。把你的命留下。」","哥布林王":"「跪下！在我的寶藏面前，你連螻蟻都不如！」","深淵守衛":"「深淵從不放人離開。你的恐懼，將成為我的力量。」","煉獄魔龍":"「凡人，竟敢踏入龍焰的領地？化為灰燼吧！」","混沌領主":"「秩序只是幻覺，唯有混沌才是永恆！」","虛空古神":"「在無盡深淵的凝視下，你的存在毫無意義……」"};
+  log(`👑 ${e.name}：${lines[baseName]||"「闖入者，接受深淵的審判吧！」"}`);
+  log(`🧰 第 ${S.floor} 層 Boss 戰前整備時間：可以切換裝備、技能配置與道具。`);
+ }else if(S.floor===1)log("📜 記憶碎片：牆上刻著「第七座門不是出口，而是封印」。你感到有人正透過黑暗注視著你。");
+ else if(S.floor%3===0)log("📜 低語：遠處傳來熟悉的人聲，似乎有人呼喚你的名字……");
+ render();
+ if(boss){
+  $("autoBattleStatus").textContent=`🧰 第 ${S.floor} 層 Boss 前整備中：完成裝備與技能調整後，按下「整備完成，開始 Boss 自動戰鬥」。`;
+ }else if(S.autoBattleEnabled===true){
+  autoBattle();
+ }else{
+  $("autoBattleStatus").textContent="🖐 手動戰鬥模式：請使用下方普攻、職業技能或生命藥水按鈕。";
+ }
+ autoSave();
+}
+function startBossBattle(){
+ if(!S||S.phase!=="prep"||!S.enemy||!S.enemy.boss)return;
+ S.phase="battle";S.bossPrep=false;
+ log(`⚔️ 你完成整備，正式挑戰第 ${S.floor} 層 Boss！`);
+ render();autoSave();
+ autoBattle();
+}
+function combatImpact(kind){let battle=$("battle"),banner=$("combatImpactBanner");if(!battle)return;let cls=kind==="player"?"combat-player-crit":"combat-enemy-crit";battle.classList.remove("combat-player-crit","combat-enemy-crit");void battle.offsetWidth;battle.classList.add(cls);setTimeout(()=>battle.classList.remove(cls),760);if(banner){banner.textContent=kind==="player"?"💥 CRITICAL HIT!":"💢 ENEMY CRITICAL!";banner.className="combat-impact-banner show "+(kind==="player"?"player":"enemy");setTimeout(()=>banner.className="combat-impact-banner "+(kind==="player"?"player":"enemy"),950)}}
+function log(t,instant=false){S.log=S.log||[];S.log.push(t);if(S.log.length>300){let removed=S.log.length-300;S.log.splice(0,removed);if(typeof logRenderedCount==="number")logRenderedCount=Math.max(0,logRenderedCount-removed);if(typeof logSnapshotFirst!=="undefined")logSnapshotFirst=S.log[0]||"";}if(typeof renderBattleLog==="function")renderBattleLog(instant)}
+function statsText(){return}
+function renderSetBonuses(){let counts=setCounts();let lines=equipmentSets.map(set=>{let n=counts[set.id]||0;if(!n)return '';let active=[8,6,4,2].filter(x=>n>=x).map(x=>{let b=set.bonus[x];return `${x}件：${Object.entries(b).map(([k,v])=>({Atk:'攻擊',Def:'防禦',Hp:'生命',Mp:'魔力',Crit:'暴擊',SpellCrit:'法術暴擊',SkillCrit:'物理技暴',Dodge:'閃避'}[k]||k)+` +${v}`).join('、')}`}).join('｜');let next=[2,4,6,8].find(x=>n<x);return `<div class="notice"><b>${set.icon} ${set.name}（${n}/8）</b><br><small>${active||'尚未啟動套裝效果'}</small>${next?`<br><small class="muted">再裝備 ${next-n} 件啟動 ${next} 件效果</small>`:''}</div>`}).filter(Boolean);return lines.length?`<h3 style="margin-top:14px">🧩 套裝效果</h3>${lines.join('')}`:''}
+function ensureLoadouts(){if(!Array.isArray(S.loadouts))S.loadouts=[];while(S.loadouts.length<4)S.loadouts.push(null);if(S.loadouts.length>4)S.loadouts=S.loadouts.slice(0,4)}
+function loadoutStats(gear){let stats={atk:0,def:0,hp:0,mp:0,crit:0,spellCrit:0,skillCrit:0,dodge:0};Object.values(gear||{}).forEach(it=>{if(it&&it.stats)Object.entries(it.stats).forEach(([k,v])=>stats[k]=(stats[k]||0)+Number(v||0))});return stats}
+function loadoutScore(gear){let st=loadoutStats(gear),counts={};Object.values(gear||{}).forEach(it=>{if(it?.setId)counts[it.setId]=(counts[it.setId]||0)+1});let score=st.atk*3+st.def*2+st.hp*.12+st.mp*.08+(st.crit+st.spellCrit+st.skillCrit+st.dodge)*2;equipmentSets.forEach(set=>{let n=counts[set.id]||0,tier=[8,6,4,2].find(x=>n>=x);if(tier)Object.entries(set.bonus[tier]).forEach(([k,v])=>{score+=v*({Atk:3,Def:2,Hp:.12,Mp:.08,Crit:2,SpellCrit:2,SkillCrit:2,Dodge:2}[k]||1)})});return Math.round(score)}
+function saveLoadout(i){ensureLoadouts();let name=prompt(`請輸入第 ${i+1} 組配裝名稱：`,S.loadouts[i]?.name||`配裝 ${i+1}`);if(name===null)return;S.loadouts[i]={name:name.trim()||`配裝 ${i+1}`,gear:JSON.parse(JSON.stringify(S.equipped||{})),savedAt:Date.now()};log(`已保存配裝：${S.loadouts[i].name}。`);render();autoSave()}
+function applyLoadout(i){ensureLoadouts();let preset=S.loadouts[i];if(!preset||!preset.gear)return;let target=JSON.parse(JSON.stringify(preset.gear)),old=S.equipped||{};Object.values(old).forEach(it=>{if(it&&!Object.values(target).some(x=>x&&String(x.id)===String(it.id))&&!S.inventory.some(x=>String(x.id)===String(it.id)))S.inventory.unshift(it)});Object.values(target).forEach(it=>{if(it)S.inventory=S.inventory.filter(x=>String(x.id)!==String(it.id))});S.equipped=target;log(`已切換至配裝「${preset.name}」，綜合評分 ${loadoutScore(target)}。`);render();autoSave()}
+function deleteLoadout(i){ensureLoadouts();if(!S.loadouts[i])return;if(!confirm(`確定刪除「${S.loadouts[i].name}」配裝紀錄？不會刪除裝備。`))return;S.loadouts[i]=null;render();autoSave()}
+function renderLoadouts(){ensureLoadouts();let current=loadoutScore(S.equipped),rank=S.loadouts.map((x,i)=>x?{i,score:loadoutScore(x.gear)}:null).filter(Boolean).sort((a,b)=>b.score-a.score),best=rank[0]?.score;return `<div class="notice"><b>🧩 四組配裝管理</b><br><small>將目前穿戴的 8 個部位保存成一組方案。切換時會自動將原裝備放回背包，並取出目標配裝。</small><br><b>目前裝備評分：${current}</b>${best!==undefined?`　<span class="${current>=best?'up':'muted'}">已保存最佳：${best}</span>`:''}</div><div class="grid2">${S.loadouts.map((x,i)=>{let score=x?loadoutScore(x.gear):0,count=x?Object.values(x.gear||{}).filter(Boolean).length:0;let isBest=x&&score===best;let sets=x?Object.values(x.gear||{}).filter(it=>it?.setName).reduce((a,it)=>(a[it.setName]=(a[it.setName]||0)+1,a),{}):{};let setText=Object.entries(sets).sort((a,b)=>b[1]-a[1]).map(([n,c])=>`${n} ${c}/8`).join('、');return `<div class="shopcard"><b>${String(i+1).padStart(2,'0')}｜${x?esc(x.name):'空配裝欄位'}</b>${x?`<p style="margin:6px 0">評分：<b>${score}</b>　${isBest?'<span class="tag up">目前最佳</span>':''}<br><small>${count}/8 個部位已配置</small><br><small>${setText||'未配置套裝裝備'}</small></p><button class="green" data-loadout-use="${i}">套用這組</button><button class="ghost" data-loadout-save="${i}">覆蓋保存</button><button class="danger" data-loadout-delete="${i}">刪除</button>`:`<p class="sub">保存目前穿戴裝備，建立新配裝方案。</p><button class="blue" data-loadout-save="${i}">保存目前配裝</button>`}</div>`}).join('')}</div>`}
+function render(){if(!S)return;let c=classes[S.cls],atk=total("Atk"),def=total("Def"),hpmax=S.maxHp+total("Hp"),mpmax=S.maxMp+total("Mp");
+ S.hp=Math.min(S.hp,hpmax);S.mp=Math.min(S.mp,mpmax);
+ $("heroSummary").innerHTML=`<b>${c.icon} ${c.name} Lv.${S.level}</b><br><span class="muted">地下城探索者 · ${S.wins} 場勝利</span>`;
+ $("hpText").textContent=`${S.hp}/${hpmax}`;$("mpText").textContent=`${S.mp}/${mpmax}`;
+ $("hpBar").style.width=100*S.hp/hpmax+"%";$("mpBar").style.width=100*S.mp/mpmax+"%";
+ $("atkText").textContent=atk;$("defText").textContent=def;$("critText").textContent=(S.cls==="mage"?total("SpellCrit")+S.baseCrit:S.cls==="archer"?total("SkillCrit")+S.baseCrit:S.baseCrit+total("Crit"))+"%";$("goldText").textContent=S.gold+" G";
+ $("xpText").textContent=`${S.xp} / ${xpNeed()} XP · 距離下次升級 ${xpNeed()-S.xp}`;$("xpBar").style.width=100*S.xp/xpNeed()+"%";
+ $("equipped").innerHTML=slots.map((sl,i)=>{let it=S.equipped[sl];return `<div class="item"><span>${slotIcons[i]} ${sl}</span><span class="${it?it.rarity:'muted'}">${it?it.name:"尚未裝備"}${it?.setName?` <small style="color:var(--gold)">${it.setIcon} ${it.setName}</small>`:''}</span></div>`}).join("")+renderSetBonuses();
+ $("floorTitle").textContent=`地下城第 ${S.floor} 層`; $("floorDesc").textContent=S.floor%5===0?"Boss 守衛著這一層的出口。":"黑暗深處傳來怪物的聲音。";
+ let e=S.enemy;
+ $("enemyName").textContent=e?e.name:"等待遭遇";$("enemyIcon").textContent=e?e.icon:"🕯️";$("enemyHpText").textContent=e?`HP ${e.hp} / ${e.maxHp}`:"—";$("enemyHpBar").style.width=e?Math.max(0,100*e.hp/e.maxHp)+"%":"0";
+ $("battleMessage").textContent=S.phase==="dead"?"你已經倒下。可以重新開始，或讀取先前存檔。":S.phase==="won"?"敵人已被擊敗，前往下一層繼續探索。":S.phase==="shop"?"已抵達補給商店，購買完成後即可離開並挑戰本層。":S.phase==="prep"?`第 ${S.floor} 層 Boss 即將開始，請先完成裝備與技能整備。`:"選擇行動。注意生命與魔力，善用技能和藥水。";
+  const actions=$("battleActions");
+  if(actions){
+   if(S.phase==="prep")actions.innerHTML='<button class="primary" id="beginBossBtn">⚔️ 整備完成，開始 Boss 自動戰鬥</button>';
+   else if(S.phase==="battle"&&autoBattleActive)actions.innerHTML='<div class="notice">🤖 自動戰鬥進行中……</div>';
+   else if(S.phase==="battle"){
+    const cost=S.cls==="warrior"?12:S.cls==="mage"?18:14;
+    const canSkill=S.cls==="mage"&&total("FreeCast")>0||S.mp>=cost;
+    actions.innerHTML=`<button class="primary" id="manualAttackBtn">⚔️ 普通攻擊</button><button class="blue" id="manualSkillBtn" ${canSkill?'':'disabled'}>✨ ${classes[S.cls].skill}（${cost} MP）</button><button class="green" id="manualPotionBtn" ${S.potions>0&&S.hp<S.maxHp+total("Hp")?'':'disabled'}>🧪 生命藥水（剩 ${S.potions} 瓶）</button>`;
+   }else actions.innerHTML="";
+  }
+ 
+ renderBattleLog();
+ $("loadoutPanel").innerHTML=renderLoadouts();
+   $("inventoryList").innerHTML=S.inventory.length?S.inventory.map((it,i)=>({it,i})).sort((a,b)=>(b.it.score||0)-(a.it.score||0)).map(({it,i})=>{let old=S.equipped[it.slot],keys=[["atk","攻擊"],["def","防禦"],["hp","生命"],["mp","魔力"],["crit","暴擊"],["spellCrit","法術暴擊"],["skillCrit","物理技暴"],["dodge","閃避"]],diff=keys.map(([k,n])=>{let d=(it.stats[k]||0)-(old?.stats?.[k]||0);return d?`<span class="${d>0?"up":"down"}">${n} ${d>0?"+":""}${d}</span>`:""}).filter(Boolean).join("　")||"<span class=muted>無屬性變動</span>";let oldDps=calcSimDps();S.equipped[it.slot]=it;let newDps=calcSimDps();if(old)S.equipped[it.slot]=old;else delete S.equipped[it.slot];let dpsDelta=newDps-oldDps,sellGain=8+(it.score||0)*3,matGain=({common:1,magic:2,rare:3,legendary:5,mythic:8}[it.rarity]||1);return `<div class="item"><div style="flex:1"><b class="${it.rarity}">${it.name}</b> <span class="tag">${it.rarityName}</span><small>${it.slot} · ${it.label} · 強化 +${it.enhanceLevel||0}</small>${it.setName?`<small style="color:var(--gold)">${it.setIcon} ${it.setName}部件</small>`:""}<small>相較目前裝備：${diff}</small><small>預估 DPS：${oldDps.toFixed(1)} → ${newDps.toFixed(1)} <span class="${dpsDelta>=0?"up":"down"}">(${dpsDelta>=0?"+":""}${dpsDelta.toFixed(1)})</span></small></div><div><button class="green" data-equip="${i}">直接穿戴</button><button class="ghost" data-sell="${i}">出售 (+${sellGain}G)</button><button class="blue" data-disassemble="${i}">分解 (+${matGain}材料)</button></div></div>`}).join(""):"<div class='notice'>背包目前是空的。打倒怪物就有機會取得裝備！</div>";
+ // 背包批次出售／分解：勾選品質後只處理背包內裝備，不會碰到已穿戴裝備。
+  const qualityNames={common:"普通",magic:"魔法",rare:"稀有",legendary:"傳說",mythic:"神話"};
+ $("inventoryBulk").innerHTML=`<div class="notice"><b>批次整理背包</b><br><small>點擊對應品質即可直接出售或分解（僅處理背包內裝備，不會影響已穿戴裝備）：</small><div style="display:grid;gap:6px;margin-top:8px">${Object.entries(qualityNames).map(([k,n])=>{let list=S.inventory.filter(it=>it.rarity===k),cnt=list.length,goldSum=list.reduce((a,it)=>a+8+(it.score||0)*3,0),matSum=cnt*({common:1,magic:2,rare:3,legendary:5,mythic:8}[k]||1);return `<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;padding:6px 10px;background:#151e2b;border:1px solid #354256;border-radius:8px"><b class="${k}">${n}（${cnt} 件）</b><div><button class="ghost" data-bulk="sell:${k}" ${cnt?'':'disabled'}>出售 (+${goldSum}G)</button> <button class="blue" data-bulk="disassemble:${k}" ${cnt?'':'disabled'}>分解 (+${matSum}材料)</button></div></div>`;}).join('')}</div></div>`;
+ const enhanceRows=[...S.inventory.map((it,i)=>({it,kind:"bag",key:i})),...Object.entries(S.equipped||{}).filter(([,it])=>!!it).map(([slot,it])=>({it,kind:"equipped",key:slot}))];
+ $("enhancePanel").innerHTML=`<div class="notice">強化材料：<b style="color:var(--gold)">${S.upgradeMaterials||0} 個</b><br><small>分解裝備可取得強化材料。每次強化提升該裝備所有屬性 6%，最高 +20；強化等級越高，消耗材料越多。背包與已穿戴裝備都能強化。</small></div>${enhanceRows.length?enhanceRows.map(({it,kind,key})=>`<div class="item"><div style="flex:1"><b class="${it.rarity}">${esc(it.name)}</b><small>${it.slot}｜${kind==="equipped"?"已穿戴 · ":"背包 · "}強化 +${it.enhanceLevel||0}｜${it.label}</small>${it.setName?`<small style="color:var(--gold)">${it.setIcon} ${it.setName}</small>`:""}</div><button class="blue" data-enhance-${kind}="${key}" ${(S.upgradeMaterials||0)<(2+(it.enhanceLevel||0))||(it.enhanceLevel||0)>=20?"disabled":""}>強化（${2+(it.enhanceLevel||0)} 材料）</button></div>`).join(""):'<div class="notice">目前沒有可強化的裝備。</div>'}`;
+ const tree=S.skillTree||{};
+ const classNodes={warrior:[['vitality','鋼鐵體魄','每級最大生命 +15',10],['guard','堅盾訓練','每級防禦力 +1',10],['power','重武器訓練','每級攻擊力 +2',10],['skill','破甲重斬','每級重斬傷害倍率 +0.2',10]],mage:[['spellPower','奧術專精','每級法術攻擊力 +2',10],['spellCrit','法術暴擊','每級法術暴擊率 +4%',10],['freeCast','節能施法','每級施法不消耗魔力機率 +5%',10],['vitality','魔力護體','每級最大生命 +8',10]],archer:[['skillCrit','致命瞄準','每級物理技暴率 +5%',10],['dodge','幻影步伐','每級閃避率 +3%',10],['power','弓術訓練','每級攻擊力 +2',10],['vitality','野外求生','每級最大生命 +10',10]]};
+ const nodes=classNodes[S.cls];
+   const meta=getMeta(),pk=meta.perks||{},rebornGain=calcRebornGain();
+ const metaNodes=[['atk','靈魂鋒芒','全職業基礎攻擊 +5',pk.atk||0],['def','不滅護甲','全職業基礎防禦 +3',pk.def||0],['hp','泰坦血脈','全職業最大生命 +35',pk.hp||0],['gold','輪迴財富','新開局初始金幣 +40 G',pk.gold||0]];
+ $("skillList").innerHTML=`<div class="notice"><b>${classes[S.cls].name}專屬技能樹｜可用技能點：${S.skillPoints||0}</b><br>每次角色升級獲得 1 點。每個技能最多提升 10 級，專注培養職業特色。</div>`+nodes.map(([k,n,d,max])=>`<div class="item skillnode"><div><b>${n}　Lv.${tree[k]||0}/${max}</b><small>${d}</small></div><button class="blue" data-skillup="${k}" ${(S.skillPoints||0)<=0||(tree[k]||0)>=max?'disabled':''}>升級（1 點）</button></div>`).join("")+`<div class="notice">職業技能：${classes[S.cls].skill}。${S.cls==='warrior'?'戰士擅長站穩陣線，以高生命、防禦與重擊取勝。':S.cls==='mage'?'法師專精法術爆擊，並有機會免費施放法術。':'弓箭手以技能爆擊與閃避見長，靠靈活走位持續輸出。'}</div><h3 style="margin-top:18px">🔮 輪迴殿堂（全職業永久繼承）</h3><div class="notice" style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><div><b>持有靈魂結晶：<span style="color:var(--gold)">💎 ${meta.crystals}</span></b><br><small>累計轉生：${meta.reborns} 次｜歷史最高層數：第 ${meta.bestFloor} 層</small></div><button class="primary" onclick="reincarnateNow()" ${rebornGain<=0?'disabled':''}>${rebornGain<=0?'🔒 需通過第 15 層 Boss 才可輪迴':`🔮 靈魂輪迴（結算 +${rebornGain} 💎）`}</button></div>`+metaNodes.map(([k,n,d,lv])=>{let cost=3+lv*3;return `<div class="item skillnode"><div><b>${n}　Lv.${lv}/20</b><small>${d}</small></div><button class="green" onclick="upgradeMetaPerk('${k}')" ${meta.crystals<cost||lv>=20?'disabled':''}>${lv>=20?'已滿級':`強化（${cost} 💎）`}</button></div>`;}).join("");
+ const cards=S.monsterCards||[],equippedCards=S.equippedCards||[];
+ $("cardSummary").innerHTML=`已收集卡片 ${cards.length} 張｜已裝備 ${equippedCards.length}/3 張<br>怪物卡片會提供隨機能力，裝備後直接加成角色屬性。`;
+ const totalStars=getCodexStars(),maxStars=monsterCatalog.length*5;
+ $("monsterBook").innerHTML=`<div class="notice"><b>⭐ 圖鑑星級總覽：${totalStars} / ${maxStars} 星（跨輪迴永久生效）</b><br><small>每獲得 1 顆星，全職業永久：<b style="color:var(--gold)">攻擊 +1.5%</b>、<b style="color:var(--gold)">防禦 +1%</b>、<b style="color:var(--gold)">生命 +2%</b>（每 10 星額外暴擊 +1%）。<br>目前圖鑑總加成：<b>攻擊 +${(totalStars*1.5).toFixed(1)}% · 防禦 +${totalStars}% · 生命 +${totalStars*2}% · 暴擊 +${Math.floor(totalStars/10)}%</b></small></div><div class="grid2">${monsterCatalog.map(m=>{let owned=[...cards,...equippedCards].filter(c=>c.monster===m.name).sort((a,b)=>(b.level||1)-(a.level||1));let kills=meta.kills[m.name]||0,star=getMonsterStar(kills),seen=kills>0||(S.discoveredMonsters||[]).includes(m.name)||owned.length>0;if(seen&&star===0)star=1;let nextGoal=[star]||70;let best=owned;return `<div class="item"><div style="flex:1"><b>${seen?m.icon:"❔"} ${seen?m.name:"未知怪物"}</b>${seen?`<small style="color:var(--gold)">${"★".repeat(star)}${"☆".repeat(5-star)}（擊殺 ${kills}${star<5?` / ${nextGoal} 升星`:' · 已滿星'}）</small>`:''}${best?`<small>最高卡片：Lv.${best.level||1}（評分 ${cardPower(best)}）· ${cardStatsText(best)}</small>`:''}</div><span class="tag">${seen?`★${star}`:"未發現"}</span></div>`}).join("")}</div>`;
+ $("equippedCardList").innerHTML=equippedCards.length?equippedCards.map((c,i)=>`<div class="item"><div><b>${c.icon} ${c.monster} 卡 Lv.${c.level||1}</b><small>${cardStatsText(c)}</small></div><button class="ghost" data-card-unequip="${i}">卸下</button></div>`).join(""):'<div class="notice">尚未裝備怪物卡片。</div>';
+  $("cardList").innerHTML=cards.length?cards.map((c,i)=>({c,i})).sort((a,b)=>cardPower(b.c)-cardPower(a.c)||(b.c.level||1)-(a.c.level||1)).map(({c,i})=>{let best=cards.filter(x=>x.monster===c.monster).every(x=>(x.level||1)<=(c.level||1));return `<div class="item"><div style="flex:1"><b>${c.icon} ${c.monster} 卡 Lv.${c.level||1}</b>${best?'<span class="tag">目前最高等級</span>':''}<small>${cardStatsText(c)}</small><small>能力評分 ${cardPower(c)}</small></div><div>${equippedCards.some(x=>x.id===c.id)?'<span class="tag">已裝備</span>':`<button class="green" data-card-equip="${i}" ${equippedCards.length>=3?'disabled':''}>裝備卡片</button>`}<button class="blue" data-card-fuse="${i}" ${equippedCards.some(x=>x.id===c.id)?'disabled':''}>選擇融合</button></div></div>`}).join(""):'<div class="notice">尚未取得怪物卡片。擊敗怪物有機會掉落，Boss 掉落機率更高。</div>';
+ let selectedFusion=S.monsterCards.find(c=>String(c.id)===String(fusionCardId));$("cardFusion").innerHTML=`<div class="notice">同一怪物、同等級卡片已自動合成。若要融合不同怪物，先選一張再選另一張；裝備中的卡片不能當材料。</div><div id="fusionChoice" class="sub">${selectedFusion?`已選擇：${esc(selectedFusion.monster)} 卡 Lv.${selectedFusion.level||1}，請再選擇另一種怪物卡片。`:'尚未選擇卡片。'}</div>${selectedFusion?'<button class="ghost" data-fusion-cancel>取消選擇</button>':''}`;
+ $("dungeonInfo").innerHTML=`<div class="notice"><b>目前進度：第 ${S.floor} 層</b><br>每 5 層會出現 Boss；每 10 層抵達補給商店。採休閒成長曲線：前期較容易累積裝備，中後期逐步提高挑戰；裝備數值與稀有度隨深度成長。<br>目前累計勝利：${S.wins} 場<br>生命藥水：${S.potions} 瓶<br>藥水效果剩餘戰鬥：攻擊 ${S.buffs?.attack||0}、減傷 ${S.buffs?.guard||0}、幸運 ${S.buffs?.luck||0}</div>`;
+ const shop=$("shopPanel");shop.classList.toggle("hidden",S.phase!=="shop");if(S.phase==="shop"){let potionPrice=22+S.floor*2,chestPrice=42+S.floor*8,attackPrice=35+S.floor*3,guardPrice=35+S.floor*3,luckPrice=48+S.floor*4,rerolls=S.chestRerolls||0,rerollPrice=Math.ceil(chestPrice*(.35+rerolls*.38+rerolls*rerolls*.045));shop.innerHTML=`<h3>🏪 第 ${S.floor} 層補給商店</h3><p>商人：「挑好補給再出發吧！增益藥水效果持續接下來 3 場戰鬥。」</p><div class="shopgrid"><div class="shopcard"><b>❤️ 生命藥水</b><p>恢復道具 +1 瓶</p><b>${potionPrice} G</b><br><button class="green" data-buy="potion" ${S.gold<potionPrice?'disabled':''}>購買</button></div><div class="shopcard"><b>⚔️ 攻擊強化藥水</b><p>接下來 3 場戰鬥，攻擊力 +25%</p><b>${attackPrice} G</b><br><button class="blue" data-buy="attack" ${S.gold<attackPrice?'disabled':''}>購買</button></div><div class="shopcard"><b>🛡️ 傷害減免藥水</b><p>接下來 3 場戰鬥，受到傷害減少 20%</p><b>${guardPrice} G</b><br><button class="blue" data-buy="guard" ${S.gold<guardPrice?'disabled':''}>購買</button></div><div class="shopcard"><b>🍀 幸運藥水</b><p>接下來 3 場戰鬥，提高裝備掉落率與稀有度</p><b>${luckPrice} G</b><br><button class="blue" data-buy="luck" ${S.gold<luckPrice?'disabled':''}>購買</button></div><div class="shopcard"><b>🎁 隨機寶箱</b><p>價格調降，獲得一件依目前層數生成的隨機裝備</p><b>${chestPrice} G</b><br><button class="green" data-buy="chest" ${S.gold<chestPrice?'disabled':''}>購買寶箱</button></div>${S.pendingChest?`<div class="shopcard"><b class="${S.pendingChest.rarity}">本次寶箱：${S.pendingChest.name}</b><p>${S.pendingChest.rarityName} · ${S.pendingChest.label}</p><p style="color:var(--gold);font-weight:800">${S.pendingChest.setName?`${S.pendingChest.setIcon} ${S.pendingChest.setName}套裝部件`:"⚙️ 非套裝裝備"}</p>${itemCompareMarkup(S.pendingChest)}<p class="sub">每次重骰都會提高高稀有度出現機率，但費用也會逐次上升；目前已重骰 ${rerolls} 次。</p><div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px"><button class="primary" data-buy="reroll" ${S.gold<rerollPrice?'disabled':''}>🎲 重骰 (${rerollPrice}G)</button><button class="green" data-buy="chest_equip">⚔️ 直接裝備</button><button class="blue" data-buy="chest_sell">💰 出售 (+${8+(S.pendingChest.score||0)*3}G)</button><button class="ghost" data-buy="chest_disassemble">🔧 分解 (+${({common:1,magic:2,rare:3,legendary:5,mythic:8}[S.pendingChest.rarity]||1)}材料)</button><button class="ghost" data-buy="keep">🎒 收進背包</button></div>
+</div>`:''}</div><p class="sub">目前金幣：${S.gold} G。購買完成後，點擊下方按鈕離開商店。</p><button class="primary" data-leaveshop>離開商店，挑戰本層</button>`}
+ $("nextFloorBattleBtn").classList.toggle("hidden",S.phase!=="won");
+ autoSave();
+}
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function levelCheck(){while(S.xp>=xpNeed()){S.xp-=xpNeed();S.level++;S.skillPoints=(S.skillPoints||0)+1;S.maxHp+=12;S.maxMp+=6;S.baseAtk+=2;S.baseDef+=1;S.hp=S.maxHp+total("Hp");S.mp=S.maxMp+total("Mp");log(`🎉 升級！現在是 Lv.${S.level}，獲得 1 點技能點，生命與魔力已恢復。`,true)}}
+function enemyTurn(){if(S.phase!=="battle")return;let e=S.enemy;if(S.cls==="archer"&&Math.random()*100<total("Dodge")){log(`🏹 你施展幻影步伐，閃過 ${e.name} 的攻擊！`);return}let def=total("Def"),dmg=Math.max(1,Math.round((e.atk+rand(4))*(e.weakened?0.72:1)*(S.buffs&&S.buffs.guard>0?0.8:1))-def);if(e.weakened){delete e.weakened;log("重斬的壓制效果發揮作用，敵人的反擊威力降低！")}S.hp-=dmg;log(`${e.name} 攻擊你，造成 ${dmg} 點傷害。`);if(S.hp<=0){S.hp=0;S.phase="dead";log("你失去了意識……這趟冒險結束了。")}}
+function playerHit(mult=1,bonusCrit=0){if(S.phase!=="battle")return;let atk=total("Atk")*(S.buffs&&S.buffs.attack>0?1.25:1),crit=S.baseCrit+total("Crit")+bonusCrit,isCrit=Math.random()*100<crit,dmg=Math.max(1,Math.round((atk+rand(6))*mult*(isCrit?1.7:1)));S.enemy.hp-=dmg;log(`${isCrit?"💥 暴擊！":""}你對 ${S.enemy.name} 造成 ${dmg} 點傷害。`);if(S.enemy.hp<=0){victory();return}enemyTurn();render()}
+let logRenderedCount=0,logTypingQueue=[],logTypingActive=false,logSnapshotFirst="",logIdleCallbacks=[],logTypingTimer=null;
+function renderBattleLog(instant=false){
+ const box=$("log");if(!box||!S)return;
+ if(logRenderedCount>S.log.length||(logRenderedCount>0&&logSnapshotFirst!==S.log[0])){if(logTypingTimer)clearTimeout(logTypingTimer);logTypingTimer=null;box.innerHTML="";logRenderedCount=0;logTypingQueue=[];logTypingActive=false;}
+ if(!logRenderedCount)logSnapshotFirst=S.log[0]||"";
+ while(logRenderedCount<S.log.length){let message=S.log[logRenderedCount++],p=document.createElement("p");if(message.includes("暴擊")||message.includes("CRITICAL"))p.className=message.includes("敵方暴擊")||message.includes("怪物暴擊")||message.includes("Boss 暴擊")||message.includes("Boss 特殊暴擊")?"crit-enemy":"crit-player";else if(message.includes("Boss")||message.includes("階段"))p.className="boss-event";p.textContent="› ";p.dataset.typed="0";box.appendChild(p);logTypingQueue.push({p,chars:Array.from(String(message)),index:0,instant:instant&&logRenderedCount===S.log.length});}
+ if(!logTypingActive)typeNextLogCharacter();
+ box.scrollTop=box.scrollHeight;
+}
+function primeBattleLogHistory(){
+ if(!S)return;
+ S.log=Array.isArray(S.log)?S.log:[];
+ if(S.log.length>300)S.log=S.log.slice(-300);
+ const box=$("log");if(!box)return;
+ if(logTypingTimer)clearTimeout(logTypingTimer);logTypingTimer=null;
+ box.innerHTML="";
+ const recent=S.log.slice(-80);
+ for(const message of recent){
+  const p=document.createElement("p");
+  if(String(message).includes("暴擊")||String(message).includes("CRITICAL"))p.className=String(message).includes("敵方暴擊")||String(message).includes("怪物暴擊")||String(message).includes("Boss 暴擊")||String(message).includes("Boss 特殊暴擊")?"crit-enemy":"crit-player";
+  else if(String(message).includes("Boss")||String(message).includes("階段"))p.className="boss-event";
+  p.textContent="› "+String(message);box.appendChild(p);
+ }
+ logRenderedCount=S.log.length;
+ logSnapshotFirst=S.log[0]||"";
+ logTypingQueue=[];logTypingActive=false;logIdleCallbacks=[];
+ box.scrollTop=box.scrollHeight;
+}
+function afterLogPlayback(callback){if(logTypingActive||logTypingQueue.length)logIdleCallbacks.push(callback);else setTimeout(callback,0)}
+function finishLogPlayback(){if(logTypingQueue.length)return;logTypingActive=false;logTypingTimer=null;let callbacks=logIdleCallbacks.splice(0);callbacks.forEach(fn=>setTimeout(fn,0));}
+function typeNextLogCharacter(){
+ logTypingTimer=null;
+ if(!logTypingQueue.length){finishLogPlayback();return;}
+ logTypingActive=true;let item=logTypingQueue[0];
+ if(item.instant){item.p.textContent="› "+item.chars.join("");logTypingQueue.shift();let box=$("log");if(box)box.scrollTop=box.scrollHeight;typeNextLogCharacter();}
+ else if(item.index<item.chars.length){item.p.textContent+=item.chars[item.index++];let box=$("log");if(box)box.scrollTop=box.scrollHeight;logTypingTimer=setTimeout(typeNextLogCharacter,42);}
+ else{logTypingQueue.shift();typeNextLogCharacter();}
+}
+let autoBattleToken=0,autoBattleActive=false;
+function autoBattle(){
+ if(!S||S.phase!=="battle"||!S.enemy)return;
+ const token=++autoBattleToken;
+ autoBattleActive=true;
+ render();
+ let turn=0;
+ const alive=()=>token===autoBattleToken&&S&&S.phase==="battle"&&S.enemy;
+ const updateStatus=()=>{autoBattleActive=false;$("autoBattleStatus").textContent=S.phase==="won"?"🏆 戰鬥結束！你可以前往下一層。":S.phase==="dead"?"☠ 冒險者倒下了。":S.phase==="prep"?"🧰 Boss 前整備中。":"🖐 手動戰鬥模式：請使用下方操作按鈕。";render();};
+ const afterNarration=(next)=>afterLogPlayback(()=>{
+  if(!alive()){updateStatus();return;}
+  next();
+ });
+ const playerTurn=()=>{
+  if(!alive()){updateStatus();return;}
+  turn++;
+  const maxHp=S.maxHp+total("Hp"),skillCost=S.cls==="warrior"?12:S.cls==="mage"?18:14;
+  if(S.potions>0&&S.hp<maxHp*.42){
+   potionAuto();render();afterNarration(enemyTurn);
+  }else if(S.mp>=skillCost&&(turn%3!==0||S.enemy.hp>S.enemy.maxHp*.25)){
+   const skill=useSkillAuto();render();
+   afterNarration(()=>{
+    if(!alive()){updateStatus();return;}
+    playerHitAuto(skill.mult,skill.bonus);render();
+    afterNarration(enemyTurn);
+   });
+  }else{
+   log(`▶ 第 ${turn} 回合：${S.cls==="warrior"?"戰士":S.cls==="mage"?"法師":"弓箭手"}選擇普通攻擊。`);render();
+   afterNarration(()=>{
+    if(!alive()){updateStatus();return;}
+    playerHitAuto(1,0);render();
+    afterNarration(enemyTurn);
+   });
+  }
+ };
+ const enemyTurn=()=>{
+  if(!alive()){updateStatus();return;}
+  enemyTurnAuto();render();afterNarration(playerTurn);
+ };
+ updateStatus();
+ // Let any newly-created encounter text finish typing before the first action.
+ afterNarration(playerTurn);
+}
+let setBattleEndStatus=()=>{};
+function bossTransition(e){if(!e||!e.boss)return;let hpRate=e.hp/e.maxHp,phase=e.bossPhase||1,baseName=e.name.replace(/ \(覺醒.*\)/,"");if(phase===1&&hpRate<=.65){e.bossPhase=2;e.atk=Math.round(e.atk*1.16);log(`🔥 ${e.name} 進入第二階段！牠發出震耳欲聾的怒吼，攻勢提升！`);let line={"骸骨騎士":"「骨骸重鑄——讓你見識真正的死亡！」","哥布林王":"「竟敢傷到本王？衛兵……不，全部力量都給我！」","深淵守衛":"「封印……鬆動了。深淵之力，解放！」","煉獄魔龍":"「龍鱗燃起煉獄真火——感受灼熱的絕望吧！」","混沌領主":"「空間開始扭曲，你已無處可逃！」","虛空古神":"「星辰熄滅之時，便是你的終焉！」"};log(`👑 ${e.name}：${line[baseName]||"「現在才是真正的戰鬥！」"}`)}else if(phase===2&&hpRate<=.30){e.bossPhase=3;e.atk=Math.round(e.atk*1.20);log(`☠ ${e.name} 進入最終階段！周遭空間劇烈震動，牠開始不顧一切地猛攻！`);let line={"骸骨騎士":"「以這副不死之軀……送你最後一程！」","哥布林王":"「寶藏、王冠、性命——誰也別想奪走！」","深淵守衛":"「吞噬一切吧！讓這片黑暗成為你的墳墓！」","煉獄魔龍":"「在滅世龍息中化為飛灰吧！」","混沌領主":"「萬物歸於混沌——徹底崩解吧！」","虛空古神":"「凝視虛空深處吧，連靈魂都將被吞沒！」"};log(`👑 ${e.name}：${line[baseName]||"「承受深淵最後的怒火吧！」"}`)}}
+function bossSpecialAttack(e,def){let base=e.atk+rand(5),baseName=e.name.replace(/ \(覺醒.*\)/,""),damage=0,desc="";if(baseName==="骸骨騎士"){damage=Math.max(1,Math.round(base*(e.bossPhase===3?1.75:1.45)-def*.55));desc="💀 亡者斷罪：骸骨騎士揮出沉重的死亡斬擊！"}else if(baseName==="哥布林王"){damage=Math.max(1,Math.round(base*(e.bossPhase===3?1.65:1.40)-def*.50));desc="👑 王權猛擊：哥布林王高舉戰錘，朝你發動狂暴重擊！"}else if(baseName==="煉獄魔龍"){damage=Math.max(1,Math.round(base*(e.bossPhase===3?1.75:1.45)-def*.55));desc="🐉 煉獄龍息：熾熱龍焰席捲全場，灼燒你的防線！"}else if(baseName==="混沌領主"){damage=Math.max(1,Math.round(base*(e.bossPhase===3?1.75:1.45)-def*.55));desc="👁️ 混沌裂隙：扭曲的次元衝擊波撕裂了空間！"}else{damage=Math.max(1,Math.round(base*(e.bossPhase===3?1.75:1.45)-def*.50));desc="🌑 深淵脈衝：黑暗能量爆發，衝擊你的防線！"}if(e.weakened){damage=Math.round(damage*.75);delete e.weakened;log("重斬壓制效果生效，Boss 特殊攻擊威力大幅削弱！")}if(S.buffs?.guard>0)damage=Math.round(damage*.8);let isCrit=Math.random()<.14;if(isCrit)damage=Math.round(damage*1.45);let minBossDmg=Math.max(1,Math.round(e.atk*0.18));damage=Math.max(damage,minBossDmg);let cap=Math.max(25,Math.round((S.maxHp+total("Hp"))*.62));damage=Math.min(damage,cap);S.hp-=damage;if(isCrit){combatImpact("enemy");log(`☠ Boss 暴擊！${desc} 這一擊正中要害！`);log(`💥 Boss 特殊暴擊造成 ${damage} 點傷害！你的 HP：${Math.max(0,S.hp)}。`)}else{log(desc);log(`💥 Boss 特殊攻擊造成 ${damage} 點傷害！你的 HP：${Math.max(0,S.hp)}。`)}}
+function enemyTurnAuto(){if(S.phase!=="battle"||!S.enemy)return;let e=S.enemy;if(S.cls==="archer"&&Math.random()*100<total("Dodge")){log(`🏹 你施展幻影步伐，閃過 ${e.name} 的攻擊！`);return}if(e.boss){e.bossTurn=(e.bossTurn||0)+1;if(e.bossTurn%2===0){bossSpecialAttack(e,total("Def"));if(S.hp<=0){S.hp=0;S.phase="dead";log("☠ 你失去意識，視線逐漸陷入黑暗……")}return}}let def=total("Def"),maxBlock=S.cls==="warrior"?55:35,blockChance=S.cls==="warrior"?Math.min(maxBlock,def/(def+45)*85):Math.min(maxBlock,def/(def+65)*65),blocked=Math.random()*100<blockChance;if(blocked){log(`🛡️ 防禦成功！你擋下 ${e.name} 的攻擊，沒有受到傷害。`);return}let raw=e.atk+rand(4),isCrit=Math.random()<(e.boss?.16:.10),dmgTaken=Math.max(1,Math.round((raw*(e.weakened?.72:1)*(S.buffs?.guard>0?.8:1)-def)*(isCrit?1.55:1)));let minDmg=e.boss?Math.max(1,Math.round(e.atk*.12)):1,cap=Math.max(20,Math.round((S.maxHp+total("Hp"))*.55));dmgTaken=Math.min(Math.max(dmgTaken,minDmg),cap);
+;if(e.weakened){delete e.weakened;log("重斬壓制效果生效，敵人攻勢減弱。")}S.hp-=dmgTaken;if(isCrit){combatImpact("enemy");log(`💢 敵方暴擊！${e.name} 抓準破綻發動猛烈攻擊，造成 ${dmgTaken} 點暴擊傷害！你的 HP：${Math.max(0,S.hp)}。`)}else log(`💢 ${e.name} 發動攻擊，造成 ${dmgTaken} 點傷害。你的 HP：${Math.max(0,S.hp)}。`);if(S.hp<=0){S.hp=0;S.phase="dead";log("☠ 你失去意識，視線逐漸陷入黑暗……")}}
+function playerHitAuto(mult=1,bonusCrit=0){if(S.phase!=="battle")return;let atk=total("Atk")*(S.buffs?.attack>0?1.25:1),crit=S.baseCrit+total("Crit")+bonusCrit,isCrit=Math.random()*100<crit,dmg=Math.max(1,Math.round((atk+rand(6))*mult*(isCrit?1.7:1)));S.enemy.hp-=dmg;if(isCrit){combatImpact("player");log(`💥 暴擊！致命一擊！你對 ${S.enemy.name} 造成 ${dmg} 點傷害。敵方剩餘 HP：${Math.max(0,S.enemy.hp)}。`)}else log(`⚔️ 你對 ${S.enemy.name} 造成 ${dmg} 點傷害。敵方剩餘 HP：${Math.max(0,S.enemy.hp)}。`);if(S.enemy.hp<=0){victory();return}bossTransition(S.enemy)}
+function potionAuto(){let max=S.maxHp+total("Hp"),base=Math.max(30,Math.round(max*.30+S.floor*1.5)),heal=Math.min(Math.min(base,Math.round(max*.45)),max-S.hp);S.hp+=heal;S.potions--;log(`🧪 AI 判斷生命低於安全線，使用生命藥水，恢復 ${heal} HP（剩餘 ${S.potions} 瓶）。`)}
+function useSkillAuto(){let cost=S.cls==="warrior"?12:S.cls==="mage"?18:14;if(S.cls==="mage"&&Math.random()*100<total("FreeCast"))log("✨ 奧術節能觸發：免費施法！");else S.mp-=cost;let tree=S.skillTree||{},mult=(S.cls==="warrior"?2.05:S.cls==="mage"?2.45:2.05)+(tree.skill||0)*.2+(tree.spellPower||0)*.08,bonus=S.cls==="archer"?total("SkillCrit"):S.cls==="mage"?total("SpellCrit"):0;if(S.cls==="warrior"){S.enemy.weakened=true;log("🛡 AI 決策：施展重斬，壓制敵人下一次攻擊！")}else if(S.cls==="mage")log("🔮 AI 決策：施放火球術，奧術烈焰吞沒敵人！");else log("🏹 AI 決策：使用精準射擊，瞄準敵人弱點！");return{mult,bonus}}
+
+function victory(){
+ let e=S.enemy;
+ if(e) e.hp=0;
+ S.phase="won";
+ S.wins++;recordCodexKill(S.enemy?.name);SFX.win();
+ let xp=38+S.floor*10+(e.boss?100:0),gold=14+rand(14)+S.floor*3+(e.boss?70:0);
+ S.xp+=xp;S.gold+=gold;
+ log(`🏆 擊敗 ${e.name}！獲得 ${xp} XP、${gold} 金幣。`,true);
+ levelCheck();
+ dropMonsterCard(e);
+ let chance=e.boss?.99:.72;
+ if(S.buffs&&S.buffs.luck>0)chance=Math.min(.98,chance+.18);
+ if(Math.random()<chance){
+  let it=makeItem();
+  S.inventory.unshift(it);
+  log(`✨ 裝備掉落：[${it.rarityName}] ${it.name}（${it.label}）`,true);
+  if(S.inventory.length>30)S.inventory.pop();
+ }else log("這次沒有裝備掉落。繼續努力！",true);
+ if(S.buffs){["attack","guard","luck"].forEach(k=>{if(S.buffs[k]>0)S.buffs[k]--})}
+ if(e.boss){
+  let potion=1+rand(2);
+  S.potions+=potion;
+  log(`Boss 寶箱額外獲得 ${potion} 瓶生命藥水！`,true);
+  S.autoBattleEnabled=false;
+  render();
+  autoSave();
+  askAutoBattleAfterBoss(S.floor);
+  return;
+ }else if(S.autoBattleEnabled){
+  afterLogPlayback(()=>setTimeout(()=>{if(S.phase==="won"&&S.autoBattleEnabled)nextFloor()},450));
+ }
+ render();
+ autoSave();
+}
+function useSkill(){if(S.phase!=="battle")return;let cost=S.cls==="warrior"?12:S.cls==="mage"?18:14,tree=S.skillTree||{};if(S.cls==="mage"&&Math.random()*100<total("FreeCast")){log("✨ 奧術節能觸發！這次施法不消耗魔力。")}else{if(S.mp<cost)return;S.mp-=cost}let mult=(S.cls==="warrior"?2.05:S.cls==="mage"?2.45:2.05)+(tree.skill||0)*.2+(tree.spellPower||0)*.08;let bonus=S.cls==="mage"?total("SpellCrit"):total("SkillCrit");if(S.cls==="warrior"){log("🛡️ 你使出重斬，戰士的力量貫穿敵人並壓制其反擊！");S.enemy.weakened=true;}if(S.cls==="mage")log("🔮 火球術在黑暗中炸裂，奧術能量奔流！");if(S.cls==="archer")log("🏹 你瞄準弱點，射出致命的一箭！");SFX.skill();playerHit(mult,bonus)}
+function potion(){let max=S.maxHp+total("Hp");if(S.potions<=0||S.hp>=max||S.phase!=="battle")return;let base=Math.max(30,Math.round(max*.30+S.floor*1.5));let cap=Math.round(max*.45);let heal=Math.min(Math.min(base,cap),max-S.hp);S.hp+=heal;S.potions--;SFX.potion();log(`使用生命藥水，恢復 ${heal} HP（依角色最大生命與地下城層數成長）。`);enemyTurn();render()}
+function calcSimDps(){let atk=total('Atk'),crit=Math.min(100,total('Crit')+(S.cls==='mage'?total('SpellCrit'):total('SkillCrit'))*0.5);return atk*(1+crit*0.007);}
+function itemCompareMarkup(it){let old=S.equipped[it.slot]||null,keys=[['atk','攻擊'],['def','防禦'],['hp','生命'],['mp','魔力'],['crit','暴擊'],['spellCrit','法術暴擊'],['skillCrit','物理技暴'],['dodge','閃避']],rows=keys.map(([k,n])=>{let a=old?.stats?.[k]||0,b=it.stats?.[k]||0,d=b-a;if(!a&&!b)return '';let unit=['crit','spellCrit','skillCrit','dodge'].includes(k)?'%':'';return `<div class="compare-stat"><small>${n}</small><b>${a}${unit} → ${b}${unit}</b><div class="${d>0?'up':d<0?'down':'muted'}">${d>0?'+':''}${d}${unit}</div></div>`}).filter(Boolean).join('');let oldDps=calcSimDps();S.equipped[it.slot]=it;let newDps=calcSimDps();if(old)S.equipped[it.slot]=old;else delete S.equipped[it.slot];let delta=newDps-oldDps;return `<div class="notice" style="margin:8px 0"><b>與目前${it.slot}比較</b><br><small>${old?`目前：${old.name}（${old.rarityName}）`:'目前尚未裝備此部位'}</small><div class="compare-grid" style="margin-top:8px">${rows||'<div class="muted">沒有屬性數值</div>'}</div><div style="margin-top:8px"><b>預估 DPS：</b>${oldDps.toFixed(1)} → ${newDps.toFixed(1)} <span class="${delta>=0?'up':'down'}">(${delta>=0?'+':''}${delta.toFixed(1)})</span></div></div>`}
+let previewIndex=null;function previewEquip(i,itemOverride=null){let it=itemOverride||S.inventory[i];if(!it)return;previewIndex=itemOverride?-1:i;let old=S.equipped[it.slot]||null,keys=[['atk','攻擊力'],['def','防禦力'],['hp','生命上限'],['mp','魔力上限'],['crit','一般暴擊'],['spellCrit','法術暴擊'],['skillCrit','物理技暴'],['dodge','閃避率']];let before={};keys.forEach(([k])=>before[k]=old&&old.stats[k]||0);let after={...before};keys.forEach(([k])=>after[k]=(old?old.stats[k]||0:0));keys.forEach(([k])=>after[k]=it.stats[k]||0);let rows=keys.filter(([k])=>(before[k]||0)!==0||(after[k]||0)!==0).map(([k,n])=>{let d=after[k]-before[k],unit=['crit','spellCrit','skillCrit','dodge'].includes(k)?'%':'';return `<div class="compare-stat"><small>${n}</small><b>${before[k]}${unit} → ${after[k]}${unit}</b><div class="${d>0?'up':d<0?'down':'muted'}">${d>0?'+':''}${d}${unit}</div></div>`}).join('');let oldAtk=total('Atk'),oldCrit=S.baseCrit+total(S.cls==='mage'?'SpellCrit':S.cls==='archer'?'SkillCrit':'Crit'),oldDps=oldAtk*(1+oldCrit*.007);let newAtk=oldAtk-(old?old.stats.atk||0:0)+(it.stats.atk||0),critKey=S.cls==='mage'?'spellCrit':S.cls==='archer'?'skillCrit':'crit',newCrit=oldCrit-(old?old.stats[critKey]||0:0)+(it.stats[critKey]||0),newDps=newAtk*(1+newCrit*.007);let delta=Math.round(newDps-oldDps);$('compareContent').innerHTML=`<div class="notice"><b class="${it.rarity}">${it.rarityName}｜${it.name}</b><br>${it.slot} · ${it.label}</div><div class="compare-grid">${rows||'<div class="notice">這件裝備沒有可比較的屬性。</div>'}</div><div class="notice"><b>預估 DPS（含職業暴擊）</b><br>${oldDps.toFixed(1)} → ${newDps.toFixed(1)}　<span class="${delta>=0?'up':'down'}">${delta>=0?'+':''}${delta.toFixed(1)}</span><br><small>僅供比較輸出傾向；實際戰鬥仍受技能倍率與敵人防禦影響。</small></div><div class="sub">${old?`目前裝備：${old.name}（${old.rarityName}）`:'目前這個部位尚未裝備'}</div>`;$('compareModal').classList.remove('hidden')}
+function confirmPreview(){if(previewIndex===null)return;$('compareModal').classList.add('hidden');if(previewIndex===-1){if(!S.pendingChest){previewIndex=null;return}S.inventory.unshift(S.pendingChest);S.pendingChest=null;equip(0)}else{equip(previewIndex)}previewIndex=null}
+function equip(i){let it=S.inventory[i];if(!it)return;let old=S.equipped[it.slot];S.equipped[it.slot]=it;S.inventory.splice(i,1);if(old)S.inventory.unshift(old);log(`裝備了 ${it.name}。`);render();autoSave()}
+function selectedQualities(){return [...document.querySelectorAll(".bulk-quality:checked")].map(x=>x.value)}
+function bulkProcess(mode){let [act,q]=mode.split(":");let targets=q?[q]:Array.from(document.querySelectorAll(".bulk-quality:checked")).map(x=>x.value);if(!targets.length)return;let kept=[],count=0,totalGain=0,yieldMap={common:1,magic:2,rare:3,legendary:5,mythic:8};S.inventory.forEach(it=>{if(targets.includes(it.rarity)){count++;if(act==="sell"){let g=8+(it.score||0)*3;S.gold+=g;totalGain+=g}else{let m=yieldMap[it.rarity]||1;S.upgradeMaterials=(S.upgradeMaterials||0)+m;totalGain+=m}}else kept.push(it)});if(!count)return;S.inventory=kept;log(act==="sell"?`💰 批次出售 ${count} 件裝備，獲得 ${totalGain} 金幣。`:`🔧 批次分解 ${count} 件裝備，獲得 ${totalGain} 個強化材料。`);render();autoSave()}
+function disassembleOne(i){let it=S.inventory[i];if(!it)return;let yieldMap={common:1,magic:2,rare:3,legendary:5,mythic:8},gain=yieldMap[it.rarity]||1;S.inventory.splice(i,1);S.upgradeMaterials=(S.upgradeMaterials||0)+gain;log(`🔧 分解 ${it.name}，獲得 ${gain} 個強化材料。`);render();autoSave()}
+function enhanceTarget(it){if(!it)return;let lv=it.enhanceLevel||0,cost=2+lv;if(lv>=20||(S.upgradeMaterials||0)<cost)return;S.upgradeMaterials-=cost;it.stats=it.stats||{};Object.keys(it.stats).forEach(k=>it.stats[k]=Math.max(1,Math.round(it.stats[k]*1.06)));it.enhanceLevel=lv+1;it.score=Object.values(it.stats).reduce((a,b)=>a+b,0);let labels={atk:"攻擊",def:"防禦",hp:"生命",mp:"魔力",crit:"暴擊",spellCrit:"法術暴擊",skillCrit:"物理技暴",dodge:"閃避"};it.label=Object.entries(it.stats).map(([k,v])=>(labels[k]||k)+" +"+v).join("、");log(`🔨 ${it.name} 強化成功！目前 +${it.enhanceLevel}。`);render();autoSave()}function enhanceItem(i){enhanceTarget(S.inventory[i])}function enhanceEquipped(slot){enhanceTarget(S.equipped[slot])}
+function sell(i){let it=S.inventory.splice(i,1)[0];if(it){let price=8+it.score*3;S.gold+=price;log(`出售 ${it.name}，獲得 ${price} 金幣。`);render();autoSave()}}
+function nextFloor(){if(S.phase!=="won")return;autoBattleToken++;autoBattleActive=false;S.floor++;S.hp=Math.min(S.maxHp+total("Hp"),S.hp+Math.ceil(S.maxHp*.18));S.mp=Math.min(S.maxMp+total("Mp"),S.mp+Math.ceil(S.maxMp*.2));log(`你深入地下城第 ${S.floor} 層。稍作休整，恢復了一些生命與魔力。`);if(S.floor%10===0){S.phase="shop";S.enemy=null;S.bossPrep=false;log(`🏪 抵達第 ${S.floor} 層補給商店。`);render();autoSave();return}spawn();autoSave()}
+function leaveShop(){if(S.phase!=="shop")return;log("你離開商店，準備挑戰更深層的敵人。");spawn();autoSave()}
+function buy(type){if(S.phase!=="shop")return;if(type==="compare"){if(S.pendingChest)previewEquip(-1,S.pendingChest);return}let prices={potion:22+S.floor*2,attack:35+S.floor*3,guard:35+S.floor*3,luck:48+S.floor*4,chest:42+S.floor*8,reroll:Math.ceil((42+S.floor*8)*(.35+(S.chestRerolls||0)*.38+(S.chestRerolls||0)*(S.chestRerolls||0)*.045))};if(type==="keep"){if(!S.pendingChest)return;S.inventory.unshift(S.pendingChest);S.pendingChest=null;S.chestRerolls=0;log("你收下了寶箱裝備。");render();autoSave();return}if(type==="chest_equip"){if(!S.pendingChest)return;let it=S.pendingChest,old=S.equipped[it.slot];S.equipped[it.slot]=it;if(old)S.inventory.unshift(old);S.pendingChest=null;S.chestRerolls=0;log(`⚔️ 直接裝備了 ${it.name}！`);render();autoSave();return}if(type==="chest_sell"){if(!S.pendingChest)return;let it=S.pendingChest,gain=8+(it.score||0)*3;S.gold+=gain;S.pendingChest=null;S.chestRerolls=0;log(`💰 直接出售 ${it.name}，獲得 ${gain} 金幣。`);render();autoSave();return}if(type==="chest_disassemble"){if(!S.pendingChest)return;let it=S.pendingChest,yieldMap={common:1,magic:2,rare:3,legendary:5,mythic:8},gain=yieldMap[it.rarity]||1;S.upgradeMaterials=(S.upgradeMaterials||0)+gain;S.pendingChest=null;S.chestRerolls=0;log(`🔧 直接分解 ${it.name}，獲得 ${gain} 個強化材料。`);render();autoSave();return}let price=prices[type];if(!price||S.gold<price)return;S.gold-=price;if(type==="potion"){S.potions++;log(`購買生命藥水，花費 ${price} G。`)}else if(type==="attack"||type==="guard"||type==="luck"){S.buffs=S.buffs||{attack:0,guard:0,luck:0};S.buffs[type]=3;let n={attack:"攻擊強化",guard:"傷害減免",luck:"幸運"}[type];log(`使用${n}藥水效果：接下來 3 場戰鬥生效，花費 ${price} G。`)}else if(type==="chest"){S.chestRerolls=0;S.pendingChest=makeItem();log(`寶箱開啟：${S.pendingChest.rarityName} ${S.pendingChest.name}。可收下或付費重骰。`)}else if(type==="reroll"){S.chestRerolls=(S.chestRerolls||0)+1;S.pendingChest=makeItem(Math.min(8,S.chestRerolls));log(`重新骰寶箱！新裝備為 ${S.pendingChest.rarityName} ${S.pendingChest.name}。`)}render();autoSave()}
+function upgradeSkill(key){if(!S||S.phase==="dead"||(S.skillPoints||0)<=0)return;S.skillTree=S.skillTree||{};let allowed={warrior:["vitality","guard","power","skill"],mage:["spellPower","spellCrit","freeCast","vitality"],archer:["skillCrit","dodge","power","vitality"]}[S.cls];if(!allowed.includes(key)||(S.skillTree[key]||0)>=10)return;S.skillTree[key]=(S.skillTree[key]||0)+1;S.skillPoints--;let names={power:"重武器訓練",guard:"堅盾訓練",vitality:"體魄強化",skill:"職業技能強化",spellPower:"奧術專精",spellCrit:"法術暴擊",freeCast:"節能施法",skillCrit:"致命瞄準",dodge:"幻影步伐"};log(`技能樹升級：${names[key]} Lv.${S.skillTree[key]}。`);render();autoSave()}
+function autoSave(){if(!S)return;try{localStorage.setItem("otherworldDungeonSave",JSON.stringify(S))}catch(e){console.warn("自動儲存失敗",e)}}
+function validSave(x){
+ return !!x && typeof x==="object" && classes[x.cls] && Number.isInteger(x.level) && x.level>=1 && Number.isFinite(x.xp) && Number.isFinite(x.gold) && Number.isFinite(x.hp) && Number.isFinite(x.maxHp) && Number.isFinite(x.mp) && Number.isFinite(x.maxMp) && Number.isInteger(x.floor) && x.floor>=1 && Array.isArray(x.inventory) && x.equipped && typeof x.equipped==="object" && ["battle","prep","won","dead","shop"].includes(x.phase);
+}
+function exportSave(){
+ if(!S){alert("目前沒有可匯出的角色進度。");return}
+ autoSave();
+ const payload={game:"異界地下城：重啟人生",version:2,exportedAt:new Date().toISOString(),save:S};
+ const blob=new Blob([JSON.stringify(payload,null,2)],{type:"application/json"});
+ const url=URL.createObjectURL(blob),a=document.createElement("a");
+ a.href=url;a.download=`異界地下城_存檔_Lv${S.level}_第${S.floor}層.json`;
+ document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);
+ alert("存檔已匯出！請妥善保存下載的 JSON 檔案。");
+}
+function importSave(file){
+ if(!file)return;
+ const reader=new FileReader();
+ reader.onload=()=>{
+  try{
+   const data=JSON.parse(reader.result),candidate=data&&data.save?data.save:data;
+   if(!validSave(candidate))throw new Error("格式不正確");
+   if(!confirm(`確定匯入這份存檔嗎？目前進度將被覆蓋。\n職業：${classes[candidate.cls].name}\n等級：${candidate.level}\n地下城：第 ${candidate.floor} 層`))return;
+   autoBattleToken++;
+   S=candidate;if(S.autoBattleEnabled===undefined);S.bossPrep=S.phase==="prep";S.log=Array.isArray(S.log)?S.log:[];S.upgradeMaterials=Number(S.upgradeMaterials)||0;S.skillPoints=Number.isInteger(S.skillPoints)?S.skillPoints:0;S.chestRerolls=Number.isInteger(S.chestRerolls)?S.chestRerolls:0;S.skillTree=S.skillTree||{};S.monsterCards=Array.isArray(S.monsterCards)?S.monsterCards:[];S.equippedCards=Array.isArray(S.equippedCards)?S.equippedCards:[];S.discoveredMonsters=Array.isArray(S.discoveredMonsters)?S.discoveredMonsters:[];ensureLoadouts();autoMergeEqualCards();selectedClass=S.cls;
+   if(S.phase==="battle"&&(!S.enemy||!Number.isFinite(S.enemy.hp)||S.enemy.hp<=0)){S.enemy=null;}
+   primeBattleLogHistory();autoSave();$("startModal").classList.add("hidden");
+   if(S.phase==="battle"&&!S.enemy){render();log("⚠ 存檔中的敵人狀態不完整，已在本層重新遭遇敵人。");spawn();}
+   else{render();log("已成功匯入存檔，歡迎回到地下城！");if(S.phase==="battle"&&S.autoBattleEnabled===true)afterLogPlayback(()=>autoBattle());}
+   autoSave();alert("存檔匯入成功！");
+  }catch(err){alert("匯入失敗：檔案不是有效的遊戲存檔，或檔案內容已損毀。");}
+  $("importFile").value="";
+ };
+ reader.onerror=()=>{alert("無法讀取這個檔案。");$("importFile").value=""};
+ reader.readAsText(file);
+}
+function load(){try{let x=JSON.parse(localStorage.getItem("otherworldDungeonSave"));if(x&&x.cls&&classes[x.cls]){S=x;S.autoBattleEnabled=S.autoBattleEnabled===true;S.bossPrep=S.phase==="prep";S.upgradeMaterials=Number(S.upgradeMaterials)||0;S.skillPoints=Number.isInteger(S.skillPoints)?S.skillPoints:0;S.chestRerolls=Number.isInteger(S.chestRerolls)?S.chestRerolls:0;S.skillTree=S.skillTree||{};S.monsterCards=Array.isArray(S.monsterCards)?S.monsterCards:[];S.equippedCards=Array.isArray(S.equippedCards)?S.equippedCards:[];S.discoveredMonsters=Array.isArray(S.discoveredMonsters)?S.discoveredMonsters:[];ensureLoadouts();autoMergeEqualCards();return true}}catch(e){}return false}
+function startGame(){
+ let picked=document.querySelector("#classChoices .classcard.selected");
+ if(picked&&picked.dataset.class)selectedClass=picked.dataset.class;
+ S=fresh(selectedClass);$("startModal").classList.add("hidden");
+ $("choiceTitle").textContent="⚔ 冒險啟程！";
+ $("choiceDesc").innerHTML="第 <b>1 ～ 4 層</b> 要開啟自動推進，直到 <b>第 5 層 Boss</b> 前再暫停整備嗎？";
+ $("customChoiceModal").classList.remove("hidden");
+ $("choiceAutoBtn").onclick=()=>{$("customChoiceModal").classList.add("hidden");S.autoBattleEnabled=true;spawn();render();autoSave()};
+ $("choiceManualBtn").onclick=()=>{$("customChoiceModal").classList.add("hidden");S.autoBattleEnabled=false;spawn();render();autoSave()};
+}
+$("classChoices").addEventListener("click",e=>{let card=e.target.closest(".classcard");if(!card)return;selectedClass=card.dataset.class;document.querySelectorAll(".classcard").forEach(x=>x.classList.toggle("selected",x===card))});
+$("battleActions").addEventListener("click",e=>{
+ let b=e.target.closest("#beginBossBtn"),a=e.target.closest("#manualAttackBtn"),sk=e.target.closest("#manualSkillBtn"),p=e.target.closest("#manualPotionBtn");
+ if(b)startBossBattle();
+ if(a&&S&&S.phase==="battle"&&!autoBattleActive){playerHit();render();autoSave()}
+ if(sk&&S&&S.phase==="battle"&&!autoBattleActive){useSkill();render();autoSave()}
+ if(p&&S&&S.phase==="battle"&&!autoBattleActive){potion();render();autoSave()}
+});
+$("confirmEquip").onclick=confirmPreview;$("cancelCompare").onclick=()=>{$("compareModal").classList.add("hidden");previewIndex=null};$("startBtn").onclick=startGame;$("nextFloorBattleBtn").onclick=nextFloor;
+
+$("inventoryList").addEventListener("click",e=>{let b=e.target.closest("[data-equip]"),c=e.target.closest("[data-sell]"),d=e.target.closest("[data-disassemble]");if(b)equip(+b.dataset.equip);if(c)sell(+c.dataset.sell);if(d)disassembleOne(+d.dataset.disassemble)});$("inventoryBulk").addEventListener("click",e=>{let b=e.target.closest("[data-bulk]");if(b)bulkProcess(b.dataset.bulk)});$("enhancePanel").addEventListener("click",e=>{let b=e.target.closest("[data-enhance]");let q=e.target.closest("[data-enhance-equipped]");if(b)enhanceItem(+b.dataset.enhance);if(q)enhanceEquipped(q.dataset.enhanceEquipped)});
+$("loadoutPanel").addEventListener("click",e=>{let a=e.target.closest("[data-loadout-save]"),b=e.target.closest("[data-loadout-use]"),c=e.target.closest("[data-loadout-delete]");if(a)saveLoadout(+a.dataset.loadoutSave);if(b)applyLoadout(+b.dataset.loadoutUse);if(c)deleteLoadout(+c.dataset.loadoutDelete)});
+let fusionCardId=null;
+function equipCard(i){let c=S.monsterCards[i];if(!c||S.equippedCards.length>=3)return;S.equippedCards.push(c);S.monsterCards.splice(i,1);log(`裝備怪物卡片：${c.monster}。`);render();autoSave()}
+function unequipCard(i){let c=S.equippedCards.splice(i,1)[0];if(c){S.monsterCards.push(c);autoMergeEqualCards();log(`卸下 ${c.monster} 卡片。`);render();autoSave()}}
+function mergeCard(i){let c=S.monsterCards[i];if(!c)return;let j=S.monsterCards.findIndex((x,k)=>k!==i&&x.monster===c.monster);if(j<0){alert("需要另一張相同怪物的卡片才能合成。");return}let other=S.monsterCards[j];let merged={...c,id:Date.now()+Math.random(),level:(c.level||1)+(other.level||1),stats:{}};let keys=new Set([...Object.keys(c.stats||{}),...Object.keys(other.stats||{})]);keys.forEach(k=>merged.stats[k]=Math.round(((c.stats[k]||0)+(other.stats[k]||0))*1.45));let hi=Math.max(i,j),lo=Math.min(i,j);S.monsterCards.splice(hi,1);S.monsterCards.splice(lo,1);S.monsterCards.push(merged);log(`${c.monster} 卡片合成成功！升為 Lv.${merged.level}。`);render();autoSave()}
+function fuseCard(i){let chosen=S.monsterCards.findIndex(c=>String(c.id)===String(fusionCardId));if(fusionCardId===null||chosen<0){fusionCardId=S.monsterCards[i]?.id??null;render();return}if(i===chosen)return;let a=S.monsterCards[chosen],b=S.monsterCards[i];if(!a||!b||a.monster===b.monster){alert("融合需要兩張不同怪物的卡片，請選擇不同種類。");return}let names=monsterCatalog.map(x=>x.name).filter(n=>n!==a.monster&&n!==b.monster),name=names[rand(names.length)]||a.monster,card=makeMonsterCard(name),all={...a.stats};Object.entries(b.stats).forEach(([k,v])=>all[k]=(all[k]||0)+v);let keys=Object.keys(all);card.stats={};keys.sort(()=>Math.random()-.5).slice(0,2+rand(3)).forEach(k=>card.stats[k]=Math.max(1,Math.round(all[k]*(.55+Math.random()*.45))));card.level=Math.max(a.level||1,b.level||1);let hi=Math.max(chosen,i),lo=Math.min(chosen,i);S.monsterCards.splice(hi,1);S.monsterCards.splice(lo,1);S.monsterCards.push(card);log(`✨ 卡片融合成功！${a.monster}＋${b.monster} 融合成 ${name} 卡片。`);fusionCardId=null;render();autoSave()}
+function cancelCardFusion(){fusionCardId=null;render()}
+$("cardList").addEventListener("click",e=>{let a=e.target.closest("[data-card-equip]"),b=e.target.closest("[data-card-merge]"),c=e.target.closest("[data-card-fuse]");if(a)equipCard(+a.dataset.cardEquip);if(b)mergeCard(+b.dataset.cardMerge);if(c)fuseCard(+c.dataset.cardFuse)});
+$("equippedCardList").addEventListener("click",e=>{let b=e.target.closest("[data-card-unequip]");if(b)unequipCard(+b.dataset.cardUnequip)});
+$("cardFusion").addEventListener("click",e=>{if(e.target.closest("[data-fusion-cancel]"))cancelCardFusion()});
+
+$("skillList").addEventListener("click",e=>{let b=e.target.closest("[data-skillup]");if(b)upgradeSkill(b.dataset.skillup)});
+$("shopPanel").addEventListener("click",e=>{let b=e.target.closest("[data-buy]"),leave=e.target.closest("[data-leaveshop]");if(b)buy(b.dataset.buy);if(leave)leaveShop()});
+function switchGameTab(tabId){
+ document.querySelectorAll(".tab").forEach(x=>x.classList.toggle("active",x.dataset.tab===tabId));
+ document.querySelectorAll(".view").forEach(x=>{
+  let show=(x.id===tabId);
+  x.classList.toggle("active",show);
+  x.classList.toggle("hidden",!show);
+  x.style.display=show?"":"none";
+ });
+}
+document.querySelectorAll(".tab").forEach(b=>b.onclick=()=>{switchGameTab(b.dataset.tab);render();if(window.innerWidth<=760)window.scrollTo({top:0,behavior:"smooth"});});
+;
+switchGameTab("battle");
+$("saveBtn").onclick=()=>{if(S){autoSave();alert("進度已儲存在此瀏覽器！")}};
+$("exportBtn").onclick=exportSave;
+$("importBtn").onclick=()=>$("importFile").click();
+$("importFile").onchange=e=>importSave(e.target.files&&e.target.files[0]);
+$("resetBtn").onclick=()=>{if(confirm("確定要刪除目前進度並重新開始嗎？")){localStorage.removeItem("otherworldDungeonSave");autoBattleToken++;autoBattleActive=false;$("startModal").classList.remove("hidden");S=null}};
+if(load()){
+ selectedClass=S.cls;$("startModal").classList.add("hidden");
+ if(S.phase==="battle"&&(!S.enemy||!Number.isFinite(S.enemy.hp)||S.enemy.hp<=0))S.enemy=null;
+ primeBattleLogHistory();
+ if(S.phase==="battle"&&!S.enemy){render();spawn();}
+ else{render();log("已讀取上次的冒險進度。");if(S.phase==="battle"&&S.autoBattleEnabled===true)afterLogPlayback(()=>autoBattle());}
+}else{$("startModal").classList.remove("hidden")}
+let audioCtx=null,masterGain=null,soundOn=false,bgmTimer=null,bgmStep=0;
+function initAudio(){
+ if(!audioCtx){
+  audioCtx=new (window.AudioContext||window.webkitAudioContext)();
+  let filter=audioCtx.createBiquadFilter();
+  filter.type='lowpass';filter.frequency.value=1400;
+  let comp=audioCtx.createDynamicsCompressor();
+  comp.threshold.value=-18;comp.ratio.value=12;
+  masterGain=audioCtx.createGain();
+  masterGain.gain.value=0.85;
+  filter.connect(comp);comp.connect(masterGain);masterGain.connect(audioCtx.destination);
+  audioCtx.mainOut=filter;
+ }
+ if(audioCtx.state==='suspended')audioCtx.resume();
+}
+function playTone(freq,dur=0.12,type='triangle',vol=0.22,slideTo=null){
+ if(!soundOn)return;
+ initAudio();
+ let now=audioCtx.currentTime,osc=audioCtx.createOscillator(),gain=audioCtx.createGain();
+ osc.type=type;osc.frequency.setValueAtTime(freq,now);
+ if(slideTo)osc.frequency.exponentialRampToValueAtTime(slideTo,now+dur);
+ gain.gain.setValueAtTime(0.001,now);
+ gain.gain.linearRampToValueAtTime(vol,now+0.015);
+ gain.gain.exponentialRampToValueAtTime(0.001,now+dur);
+ osc.connect(gain);gain.connect(audioCtx.mainOut);
+ osc.start(now);osc.stop(now+dur);
+}
+const SFX={hit:()=>playTone(260,0.09,'triangle',0.32,110),crit:()=>{playTone(580,0.08,'square',0.28,980);setTimeout(()=>playTone(880,0.14,'triangle',0.32,420),60);},skill:()=>{playTone(440,0.1,'triangle',0.32,880);setTimeout(()=>playTone(880,0.18,'triangle',0.32,1320),80);},hurt:()=>playTone(180,0.16,'sawtooth',0.26,75),potion:()=>{playTone(523,0.09,'sine',0.32,659);setTimeout(()=>playTone(784,0.16,'sine',0.32,1047),80);},loot:()=>{new Array(587,784,988,1175).forEach((f,i)=>setTimeout(()=>playTone(f,0.12,'triangle',0.3),i*70));},win:()=>{new Array(523,659,784,1047).forEach((f,i)=>setTimeout(()=>playTone(f,0.14,'triangle',0.32),i*100));}};
+let bgmStyleIdx=0;
+const bgmStyles=[
+ {name:'史詩地城',speed:300,leadType:'triangle',bassType:'sine',lead:new Array(329.6,392.0,440.0,493.9,523.3,493.9,440.0,392.0,349.2,440.0,523.3,587.3,493.9,440.0,392.0,329.6),bass:new Array(164.8,0,164.8,0,220.0,0,220.0,0,174.6,0,174.6,0,196.0,0,164.8,0)},
+ {name:'疾風冒險',speed:250,leadType:'triangle',bassType:'triangle',lead:new Array(523.3,392.0,329.6,392.0,523.3,587.3,659.3,523.3,587.3,493.9,392.0,493.9,659.3,587.3,523.3,392.0),bass:new Array(261.6,0,196.0,0,261.6,0,196.0,0,293.7,0,196.0,0,261.6,0,196.0,0)},
+ {name:'靜謐營火',speed:380,leadType:'sine',bassType:'sine',lead:new Array(440.0,523.3,659.3,587.3,523.3,440.0,392.0,440.0,329.6,392.0,440.0,523.3,493.9,440.0,392.0,329.6),bass:new Array(220.0,0,0,220.0,196.0,0,0,196.0,164.8,0,0,164.8,196.0,0,220.0,0)},
+ {name:'暗影神殿',speed:320,leadType:'triangle',bassType:'sine',lead:new Array(293.7,349.2,440.0,415.3,349.2,329.6,293.7,261.6,293.7,440.0,523.3,493.9,440.0,349.2,329.6,293.7),bass:new Array(146.8,0,146.8,0,174.6,0,164.8,0,146.8,0,220.0,0,174.6,0,146.8,0)}
+];
+function cycleBGMStyle(){bgmStyleIdx=(bgmStyleIdx+1)%bgmStyles.length;let btn=$('bgmStyleBtn');if(btn)btn.textContent='🎵 曲風：'+bgmStyles[bgmStyleIdx].name;if(soundOn)startBGM();}
+function startBGM(){
+ stopBGM();
+ const bossLead=new Array(220.0,220.0,261.6,220.0,293.7,277.2,261.6,196.0,220.0,220.0,329.6,293.7,261.6,246.9,220.0,196.0);
+ const bossBass=new Array(110.0,110.0,130.8,110.0,146.8,138.6,130.8,98.0,110.0,110.0,164.8,146.8,130.8,123.5,110.0,98.0);
+ let st=bgmStyles[bgmStyleIdx];
+ bgmTimer=setInterval(()=>{
+  if(!soundOn)return;
+  let isBoss=S&&S.enemy&&S.enemy.boss&&S.phase==='battle';
+  let leadSeq=isBoss?bossLead:st.lead;
+  let bassSeq=isBoss?bossBass:st.bass;
+  let idx=bgmStep%leadSeq.length;
+  let lNote=leadSeq[idx],bNote=bassSeq[idx];
+  if(lNote>0)playTone(lNote,isBoss?0.18:0.26,isBoss?'triangle':st.leadType,0.20);
+  if(bNote>0)playTone(bNote,0.30,st.bassType,0.16);
+  bgmStep++;
+ },st.speed);
+}
+function stopBGM(){if(bgmTimer){clearInterval(bgmTimer);bgmTimer=null;}}
+function toggleAudio(){soundOn=!soundOn;let btn=$('bgmBtn');if(soundOn){initAudio();startBGM();if(btn)btn.textContent='🔊 音效：開';SFX.potion();}else{stopBGM();if(btn)btn.textContent='🔇 音效：關';}}
+function getMeta(){
+ try{let m=JSON.parse(localStorage.getItem("otherworldDungeonMeta")||"{}");return {crystals:Number(m.crystals)||0,reborns:Number(m.reborns)||0,bestFloor:Number(m.bestFloor)||1,kills:m.kills&&typeof m.kills==="object"?m.kills:{},perks:Object.assign({atk:0,def:0,hp:0,gold:0},m.perks||{})};}
+ catch(e){return {crystals:0,reborns:0,bestFloor:1,kills:{},perks:{atk:0,def:0,hp:0,gold:0}};}
+}
+function saveMeta(m){try{localStorage.setItem("otherworldDungeonMeta",JSON.stringify(m));}catch(e){}}
+function getMonsterStar(kills){return kills>=70?5:kills>=35?4:kills>=15?3:kills>=5?2:kills>=1?1:0;}
+function getCodexStars(){let m=getMeta();return monsterCatalog.reduce((sum,x)=>sum+getMonsterStar(m.kills[x.name]||0),0);}
+function recordCodexKill(rawName){
+ if(!rawName)return;
+ let name=String(rawName).replace(/ \(覺醒.*\)/,""),m=getMeta();
+ let oldStar=getMonsterStar(m.kills[name]||0);
+ m.kills[name]=(m.kills[name]||0)+1;
+ if((S?.floor||1)>m.bestFloor)m.bestFloor=S.floor;
+ saveMeta(m);
+ let newStar=getMonsterStar(m.kills[name]);
+ if(newStar>oldStar&&typeof log==="function")log(`⭐ 圖鑑升星！【${name}】達到 ★${newStar}，全職業永久屬性提升！`,true);
+}
+function calcRebornGain(){
+ let fl=S?.floor||1;
+ if(fl<16)return 0;
+ let tier1=Math.min(10,fl-15)*1;
+ let tier2=Math.min(10,Math.max(0,fl-25))*2;
+ let tier3=Math.max(0,fl-35)*4;
+ let wakeBosses=Math.max(0,Math.floor((fl-31)/5))*5;
+ return 1+tier1+tier2+tier3+wakeBosses;
+}
+function reincarnateNow(){
+ if(!S)return;
+ let gain=calcRebornGain();
+ if(gain<=0){alert("必須先擊敗第 15 層 Boss（抵達第 16 層以上）才能進行靈魂輪迴！");return;}
+ let m=getMeta();
+ if(!confirm(`確定要進行「靈魂輪迴」嗎？\n本次結算可獲得 💎 ${gain} 靈魂結晶（目前第 ${S.floor} 層），並重開新局繼承所有圖鑑星級與輪迴天賦！`))return;
+ m.crystals+=gain;m.reborns++;saveMeta(m);
+ localStorage.removeItem("otherworldDungeonSave");
+ autoBattleToken++;autoBattleActive=false;S=null;
+ $("startModal").classList.remove("hidden");
+ alert(`🔮 輪迴完成！獲得 💎 ${gain} 靈魂結晶（累計轉生 ${m.reborns} 次）。`);
+}
+function upgradeMetaPerk(key){
+ let m=getMeta(),lv=m.perks[key]||0,cost=3+lv*3;
+ if(lv>=20||m.crystals<cost)return;
+ m.crystals-=cost;m.perks[key]=lv+1;saveMeta(m);
+ if(S)render();
+}
+</script>
+
+      <div id="customChoiceModal" class="modal hidden" style="z-index:50">
+        <div class="modalbox" style="max-width:460px;text-align:center">
+          <h3 id="choiceTitle" style="color:var(--gold);font-size:20px;margin-bottom:10px">🎉 擊敗第 5 層 Boss！</h3>
+          <p id="choiceDesc" style="color:var(--text);line-height:1.7;margin-bottom:18px">接下來第 <b>6 ～ 9 層</b> 要自動連續推進，直到 <b>第 10 層 Boss</b> 前再暫停整備嗎？</p>
+          <div style="display:grid;gap:10px">
+            <button id="choiceAutoBtn" class="primary" style="padding:12px;font-size:15px">🤖 自動推進（連刷至 Boss / 商店前暫停）</button>
+            <button id="choiceManualBtn" class="ghost" style="padding:12px;font-size:15px">🖐 手動操作（逐層自己點技能與前進）</button>
+          </div>
+        </div>
+      </div></body></html>
